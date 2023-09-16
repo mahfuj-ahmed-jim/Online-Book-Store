@@ -35,6 +35,31 @@ class AuthorController {
     }
   }
 
+  async getAuthorById(req, res) {
+    try {
+      const authorId = req.query.id;
+
+      const author = await AuthorModel.findOne(
+        { _id: authorId },
+        { createdAt: false, updatedAt: false, __v: false }
+      ).exec();;
+
+      return sendResponse(
+        res,
+        STATUS_CODE.OK,
+        RESPONSE_MESSAGE.GET_ALL_AUTHORS,
+        author
+      );
+    } catch (err) {
+      return sendResponse(
+        res,
+        STATUS_CODE.INTERNAL_SERVER_ERROR,
+        RESPONSE_MESSAGE.FAILED_TO_SIGNUP,
+        STATUS_REPONSE.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
   async addNewAuthor(req, res) {
     try {
       const response = req.body;
