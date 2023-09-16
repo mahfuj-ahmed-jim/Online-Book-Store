@@ -1,3 +1,4 @@
+const AuthModel = require("../models/auth_model");
 const UserModel = require("../models/user_model");
 const { sendResponse } = require("../utils/common");
 const STATUS_CODE = require("../constants/status_codes");
@@ -101,6 +102,39 @@ class UserController {
         res,
         STATUS_CODE.INTERNAL_SERVER_ERROR,
         RESPONSE_MESSAGE.FAILED_TO_UPDATE_USER,
+        STATUS_REPONSE.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  async deleteUser(req, res) {
+    try {
+      const userId = req.params.id;
+
+      const user = await UserModel.findOne({ _id: userId });
+      if (!user) {
+        return sendResponse(
+          res,
+          STATUS_CODE.NOT_FOUND,
+          RESPONSE_MESSAGE.USER_NOT_FOUND,
+          RESPONSE_MESSAGE.USER_NOT_FOUND
+        );
+      }
+
+      await UserModel.deleteOne({ _id: userId });
+      await AuthModel.deleteOne({ user: userId });
+
+      return sendResponse(
+        res,
+        STATUS_CODE.NO_CONTENT,
+        RESPONSE_MESSAGE.DELETE_USER
+      );
+    } catch (err) {
+      console.log(err);
+      return sendResponse(
+        res,
+        STATUS_CODE.INTERNAL_SERVER_ERROR,
+        RESPONSE_MESSAGE.FAILED_TO_DELETE_USER,
         STATUS_REPONSE.INTERNAL_SERVER_ERROR
       );
     }
