@@ -17,6 +17,7 @@ const RESPONSE_MESSAGE = {
     FAILED_TO_ADD_BOOK: "Failed to add book",
     BOOK_ADDED: "Book added successfully",
     BOOK_EXISTS: "Book already exists",
+    GET_ALL_BOOKS: "Successfully get all books",
 };
 
 module.exports = RESPONSE_MESSAGE;

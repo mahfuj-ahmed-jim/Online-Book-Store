@@ -13,7 +13,7 @@ class AuthorController {
       const limit = parseInt(req.query.limit) || 10;
 
       const authors = await AuthorModel.find(
-        {},
+        {disable: false},
         { createdAt: false, updatedAt: false, __v: false }
       ).skip((page - 1) * limit)
         .limit(limit)
@@ -40,9 +40,9 @@ class AuthorController {
       const authorId = req.query.id;
 
       const author = await AuthorModel.findOne(
-        { _id: authorId },
+        { _id: authorId, disable: false },
         { createdAt: false, updatedAt: false, __v: false }
-      ).exec();;
+      ).exec();
 
       return sendResponse(
         res,

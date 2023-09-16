@@ -7,6 +7,35 @@ const STATUS_REPONSE = require("../constants/status_response");
 const RESPONSE_MESSAGE = require("../constants/response_message");
 
 class BookController {
+    async getAllBooks(req, res) {
+        try {
+          const page = parseInt(req.query.page) || 1;
+          const limit = parseInt(req.query.limit) || 10;
+    
+          const books = await BookModel.find(
+            {disable: false},
+            { summary: false, createdAt: false, updatedAt: false, __v: false, disable: false}
+          ).skip((page - 1) * limit)
+            .limit(limit)
+            .populate('author', '_id name country')
+            .exec();
+    
+          return sendResponse(
+            res,
+            STATUS_CODE.OK,
+            RESPONSE_MESSAGE.GET_ALL_BOOKS,
+            books
+          );
+        } catch (err) {
+          return sendResponse(
+            res,
+            STATUS_CODE.INTERNAL_SERVER_ERROR,
+            RESPONSE_MESSAGE.FAILED_TO_SIGNUP,
+            STATUS_REPONSE.INTERNAL_SERVER_ERROR
+          );
+        }
+      }
+
     async addNewBook(req, res) {
         try {
             const response = req.body;
