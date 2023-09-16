@@ -20,6 +20,10 @@ const authorSchema = new mongoose.Schema(
       min: 0,
       required: true,
     },
+    disable: {
+        type: Boolean,
+        default: false,
+    },
   },
   {
     timestamps: true,

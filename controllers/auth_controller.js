@@ -140,7 +140,7 @@ class AuthController {
         );
       }
 
-      if (!auth.verified) {
+      if (auth.disable) {
         return sendResponse(
           res,
           STATUS_CODE.FORBIDDEN,
