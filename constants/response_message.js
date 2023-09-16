@@ -16,8 +16,11 @@ const RESPONSE_MESSAGE = {
     GET_ALL_AUTHORS: "Successfully get all authors data",
     GET_AUTHOR: "Successfully get author data",
     FAILED_TO_ADD_BOOK: "Failed to add book",
+    FAILED_TO_UPDATE_BOOK: "Failed to update book",
     BOOK_ADDED: "Book added successfully",
+    BOOK_UPDATED: "Book updated successfully",
     BOOK_EXISTS: "Book already exists",
+    BOOK_DONT_EXISTS: "Book don't exists",
     GET_ALL_BOOKS: "Successfully get all books data",
     GET_BOOK: "Successfully get book data",
 };

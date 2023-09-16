@@ -111,6 +111,64 @@ class BookController {
             );
         }
     }
+
+    async updateBook(req, res) {
+        try {
+            const response = req.body;
+
+            const book = await BookModel.findOne({ _id: response.bookId });
+            if (!book) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.CONFLICT,
+                    RESPONSE_MESSAGE.FAILED_TO_UPDATE_BOOK,
+                    RESPONSE_MESSAGE.BOOK_DONT_EXISTS
+                );
+            }
+
+            if (response.author) {
+                const author = await AuthorModel.findOne({ _id: response.author });
+                if (!author) {
+                    return sendResponse(
+                        res,
+                        STATUS_CODE.NOT_FOUND,
+                        RESPONSE_MESSAGE.FAILED_TO_UPDATE_BOOK,
+                        RESPONSE_MESSAGE.FAILED_TO_ADD_AUTHOR
+                    );
+                }
+            }
+
+            const updatedBook = await BookModel.findOneAndUpdate(
+                { _id: response.bookId },
+                { $set: response },
+                { new: true }
+            );
+
+            if (!updatedBook) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.INTERNAL_SERVER_ERROR,
+                    RESPONSE_MESSAGE.FAILED_TO_UPDATE_BOOK,
+                    STATUS_REPONSE.INTERNAL_SERVER_ERROR
+                );
+            }
+
+            return sendResponse(
+                res,
+                STATUS_CODE.OK,
+                RESPONSE_MESSAGE.BOOK_UPDATED,
+                updatedBook
+            );
+        } catch (err) {
+            console.log(err);
+            return sendResponse(
+                res,
+                STATUS_CODE.INTERNAL_SERVER_ERROR,
+                RESPONSE_MESSAGE.FAILED_TO_ADD_BOOK,
+                STATUS_REPONSE.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
 }
 
 module.exports = new BookController();
