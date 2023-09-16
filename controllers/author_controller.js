@@ -47,7 +47,7 @@ class AuthorController {
       return sendResponse(
         res,
         STATUS_CODE.OK,
-        RESPONSE_MESSAGE.GET_ALL_AUTHORS,
+        RESPONSE_MESSAGE.GET_AUTHOR,
         author
       );
     } catch (err) {

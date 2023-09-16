@@ -14,10 +14,12 @@ const RESPONSE_MESSAGE = {
     AUTHOR_ADDED: "Author added successfully",
     GET_ALL_USERS: "Successfully get all users data",
     GET_ALL_AUTHORS: "Successfully get all authors data",
+    GET_AUTHOR: "Successfully get author data",
     FAILED_TO_ADD_BOOK: "Failed to add book",
     BOOK_ADDED: "Book added successfully",
     BOOK_EXISTS: "Book already exists",
-    GET_ALL_BOOKS: "Successfully get all books",
+    GET_ALL_BOOKS: "Successfully get all books data",
+    GET_BOOK: "Successfully get book data",
 };
 
 module.exports = RESPONSE_MESSAGE;
