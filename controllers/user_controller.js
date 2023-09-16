@@ -34,7 +34,7 @@ class UserController {
       const userId = req.params.id;
 
       const user = await UserModel.findOne(
-        {_id: userId},
+        { _id: userId },
         { createdAt: false, updatedAt: false, __v: false }
       );
 
@@ -70,7 +70,7 @@ class UserController {
 
       if (response.phoneNumber) {
         const isPhoneNumberUnique = await UserModel.findOne({
-          _id: { $ne: response.userId }, 
+          _id: { $ne: response.userId },
           phoneNumber: response.phoneNumber,
         });
 
@@ -116,7 +116,7 @@ class UserController {
         return sendResponse(
           res,
           STATUS_CODE.NOT_FOUND,
-          RESPONSE_MESSAGE.USER_NOT_FOUND,
+          RESPONSE_MESSAGE.FAILED_TO_DELETE_USER,
           RESPONSE_MESSAGE.USER_NOT_FOUND
         );
       }
@@ -135,6 +135,41 @@ class UserController {
         res,
         STATUS_CODE.INTERNAL_SERVER_ERROR,
         RESPONSE_MESSAGE.FAILED_TO_DELETE_USER,
+        STATUS_REPONSE.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  async updateUserBalance(req, res) {
+    try {
+      const requestBody = req.body;
+
+      const user = await UserModel.findOne({ _id: requestBody.userId }, { createdAt: false, updatedAt: false, __v: false });
+      if (!user) {
+        return sendResponse(
+          res,
+          STATUS_CODE.NOT_FOUND,
+          RESPONSE_MESSAGE.FAILED_TO_UPDATE_USER_BALANCE,
+          RESPONSE_MESSAGE.USER_NOT_FOUND
+        );
+      }
+
+      user.balance += requestBody.amount;
+      await user.save();
+
+      return sendResponse(
+        res,
+        STATUS_CODE.OK,
+        RESPONSE_MESSAGE.USER_BALANCE_UPDATED,
+        user
+      );
+
+    } catch (err) {
+      console.log(err);
+      return sendResponse(
+        res,
+        STATUS_CODE.INTERNAL_SERVER_ERROR,
+        RESPONSE_MESSAGE.FAILED_TO_UPDATE_USER_BALANCE,
         STATUS_REPONSE.INTERNAL_SERVER_ERROR
       );
     }

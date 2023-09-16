@@ -6,5 +6,6 @@ router.get("/all", UserController.getAllUsers);
 router.get("/:id", UserController.getUserById);
 router.put("/edit", UserController.editUser);
 router.delete('/:id', UserController.deleteUser);
+router.patch('/balance', UserController.updateUserBalance);
 
 module.exports = router;

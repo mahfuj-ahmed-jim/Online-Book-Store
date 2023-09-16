@@ -21,6 +21,8 @@ const RESPONSE_MESSAGE = {
     GET_ALL_USERS: "Successfully get all users data",
     GET_USER: "Successfully get all user data",
     FAILED_TO_DELETE_USER: "Failed to delete user",
+    FAILED_TO_UPDATE_USER_BALANCE: "Failed to update user balance",
+    USER_BALANCE_UPDATED: "Successfully updated user balance",
     DELETE_USER: "Successfully deleted user",
     USER_UPDATED: "Successfully updated user",
     PHONE_NUMBER_NOT_UNIQUE: "Phone number is not unique",
