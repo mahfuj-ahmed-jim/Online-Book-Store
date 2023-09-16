@@ -36,6 +36,8 @@ const RESPONSE_MESSAGE = {
     BOOK_DONT_EXISTS: "Book don't exists",
     GET_ALL_BOOKS: "Successfully get all books data",
     GET_BOOK: "Successfully get book data",
+    FAILED_TO_DELETE_BOOK: "Failed to delete book",
+    BOOK_DELETED: "Successfully deleted book"
 };
 
 module.exports = RESPONSE_MESSAGE;

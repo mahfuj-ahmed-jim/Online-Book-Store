@@ -169,6 +169,38 @@ class BookController {
             );
         }
     }
+
+    async deleteBook(req, res) {
+        try {
+          const bookId = req.params.id; 
+    
+          const book = await BookModel.findOne({ _id: bookId });
+          if (!book) {
+            return sendResponse(
+              res,
+              STATUS_CODE.NOT_FOUND,
+              RESPONSE_MESSAGE.FAILED_TO_DELETE_BOOK,
+              RESPONSE_MESSAGE.BOOK_DONT_EXISTS
+            );
+          }
+    
+          await BookModel.deleteOne({ _id: bookId });
+    
+          return sendResponse(
+            res,
+            STATUS_CODE.NO_CONTENT,
+            RESPONSE_MESSAGE.BOOK_DELETED,
+          );
+        } catch (err) {
+          console.log(err);
+          return sendResponse(
+            res,
+            STATUS_CODE.INTERNAL_SERVER_ERROR,
+            RESPONSE_MESSAGE.FAILED_TO_DELETE_BOOK,
+            STATUS_REPONSE.INTERNAL_SERVER_ERROR
+          );
+        }
+      }
 }
 
 module.exports = new BookController();
