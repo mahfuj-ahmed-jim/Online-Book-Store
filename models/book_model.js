@@ -34,12 +34,13 @@ const bookSchema = new mongoose.Schema(
             type: Date,
             required: true,
         },
-        versionNo: {
+        edition: {
             type: Number,
             required: true,
         },
         ISBN: {
             type: String,
+            unique: true,
             required: true,
         },
         pageNumber: {

@@ -8,11 +8,15 @@ const RESPONSE_MESSAGE = {
     FAILED_TO_LOGIN: "Failed to Login",
     LOGIN_SUCCESSFUL: "Successfully login",
     INVALID_CREDENTIAL: "Invalid Credential",
-    FAILED_TO_ADD_AUTHOR: "Failed to add author",
-    AUTHOR_NAME_EXISTS: "Author with same name already exists",
+    INVALID_AUTHOR: "Failed to add author",
+    FAILED_TO_ADD_AUTHOR: "Invalid author",
+    AUTHOR_NAME_EXISTS: "Author already exists",
     AUTHOR_ADDED: "Author added successfully",
     GET_ALL_USERS: "Successfully get all users data",
     GET_ALL_AUTHORS: "Successfully get all authors data",
+    FAILED_TO_ADD_BOOK: "Failed to add book",
+    BOOK_ADDED: "Book added successfully",
+    BOOK_EXISTS: "Book already exists",
 };
 
 module.exports = RESPONSE_MESSAGE;

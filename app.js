@@ -1,5 +1,6 @@
 const authRoutes = require("./routes/auth_routes.js");
 const authorRoutes = require("./routes/author_routes.js");
+const bookRoutes = require("./routes/book_routes.js");
 const userRoutes = require("./routes/user_routes.js");
 const { databaseConnection } = require("./config/database.js");
 const { sendResponse } = require("./utils/common.js");
@@ -15,6 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/auth", authRoutes);
 app.use("/author", authorRoutes);
+app.use("/book", bookRoutes);
 app.use("/user", userRoutes);
 
 app.use((req, res) => {

@@ -1,0 +1,62 @@
+const BookModel = require("../models/book_model");
+const AuthorModel = require("../models/author_model");
+const UserModel = require("../models/user_model");
+const { sendResponse } = require("../utils/common");
+const STATUS_CODE = require("../constants/status_codes");
+const STATUS_REPONSE = require("../constants/status_response");
+const RESPONSE_MESSAGE = require("../constants/response_message");
+
+class BookController {
+    async addNewBook(req, res) {
+        try {
+            const response = req.body;
+
+            const book = await BookModel.findOne({ ISBN: response.ISBN });
+            if (book) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.CONFLICT,
+                    RESPONSE_MESSAGE.FAILED_TO_ADD_BOOK,
+                    RESPONSE_MESSAGE.BOOK_EXISTS
+                );
+            }
+
+            const author = await AuthorModel.findOne({ _id: response.author });
+            if (!author) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.NOT_FOUND,
+                    RESPONSE_MESSAGE.FAILED_TO_ADD_BOOK,
+                    RESPONSE_MESSAGE.FAILED_TO_ADD_AUTHOR
+                );
+            }
+
+            const createdBook = await BookModel.create(response);
+            if (!createdBook) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.INTERNAL_SERVER_ERROR,
+                    RESPONSE_MESSAGE.FAILED_TO_ADD_BOOK,
+                    STATUS_REPONSE.INTERNAL_SERVER_ERROR
+                );
+            }
+
+            return sendResponse(
+                res,
+                STATUS_CODE.CREATED,
+                RESPONSE_MESSAGE.BOOK_ADDED,
+                createdBook
+              );
+        } catch (err) {
+            console.log(err);
+            return sendResponse(
+                res,
+                STATUS_CODE.INTERNAL_SERVER_ERROR,
+                RESPONSE_MESSAGE.FAILED_TO_ADD_BOOK,
+                STATUS_REPONSE.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+}
+
+module.exports = new BookController();
