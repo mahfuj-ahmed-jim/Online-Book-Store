@@ -9,12 +9,16 @@ const RESPONSE_MESSAGE = {
     LOGIN_SUCCESSFUL: "Successfully login",
     INVALID_CREDENTIAL: "Invalid Credential",
     INVALID_AUTHOR: "Failed to add author",
+    FAILED_TO_GET_AUTHORS: "Failed to get authors data",
+    FAILED_TO_GET_SINGLE_AUTHORS: "Failed to get author data",
     FAILED_TO_ADD_AUTHOR: "Invalid author",
     AUTHOR_NAME_EXISTS: "Author already exists",
     AUTHOR_ADDED: "Author added successfully",
     GET_ALL_USERS: "Successfully get all users data",
     GET_ALL_AUTHORS: "Successfully get all authors data",
     GET_AUTHOR: "Successfully get author data",
+    FAILED_TO_GET_BOOKS: "Failed to get books data",
+    FAILED_TO_GET_SINGLE_BOOK: "Failed to get book data",
     FAILED_TO_ADD_BOOK: "Failed to add book",
     FAILED_TO_UPDATE_BOOK: "Failed to update book",
     BOOK_ADDED: "Book added successfully",
@@ -23,6 +27,8 @@ const RESPONSE_MESSAGE = {
     BOOK_DONT_EXISTS: "Book don't exists",
     GET_ALL_BOOKS: "Successfully get all books data",
     GET_BOOK: "Successfully get book data",
+    FAILED_TO_GET_USERS: "Failed to get users data",
+    FAILED_TO_GET_SINGLE_USERS: "Failed to get user data",
 };
 
 module.exports = RESPONSE_MESSAGE;

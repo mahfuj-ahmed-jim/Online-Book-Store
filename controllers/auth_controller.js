@@ -220,7 +220,7 @@ class AuthController {
       return sendResponse(
         res,
         STATUS_CODE.INTERNAL_SERVER_ERROR,
-        RESPONSE_MESSAGE.FAILED_TO_SIGNUP,
+        RESPONSE_MESSAGE.FAILED_TO_LOGIN,
         STATUS_REPONSE.INTERNAL_SERVER_ERROR
       );
     }

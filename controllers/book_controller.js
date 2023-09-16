@@ -30,7 +30,7 @@ class BookController {
             return sendResponse(
                 res,
                 STATUS_CODE.INTERNAL_SERVER_ERROR,
-                RESPONSE_MESSAGE.FAILED_TO_SIGNUP,
+                RESPONSE_MESSAGE.FAILED_TO_GET_BOOKS,
                 STATUS_REPONSE.INTERNAL_SERVER_ERROR
             );
         }
@@ -55,7 +55,7 @@ class BookController {
             return sendResponse(
                 res,
                 STATUS_CODE.INTERNAL_SERVER_ERROR,
-                RESPONSE_MESSAGE.FAILED_TO_SIGNUP,
+                RESPONSE_MESSAGE.FAILED_TO_GET_SINGLE_BOOK,
                 STATUS_REPONSE.INTERNAL_SERVER_ERROR
             );
         }
@@ -164,7 +164,7 @@ class BookController {
             return sendResponse(
                 res,
                 STATUS_CODE.INTERNAL_SERVER_ERROR,
-                RESPONSE_MESSAGE.FAILED_TO_ADD_BOOK,
+                RESPONSE_MESSAGE.FAILED_TO_UPDATE_BOOK,
                 STATUS_REPONSE.INTERNAL_SERVER_ERROR
             );
         }

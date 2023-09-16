@@ -29,7 +29,7 @@ class AuthorController {
       return sendResponse(
         res,
         STATUS_CODE.INTERNAL_SERVER_ERROR,
-        RESPONSE_MESSAGE.FAILED_TO_SIGNUP,
+        RESPONSE_MESSAGE.FAILED_TO_GET_AUTHORS,
         STATUS_REPONSE.INTERNAL_SERVER_ERROR
       );
     }
@@ -54,7 +54,7 @@ class AuthorController {
       return sendResponse(
         res,
         STATUS_CODE.INTERNAL_SERVER_ERROR,
-        RESPONSE_MESSAGE.FAILED_TO_SIGNUP,
+        RESPONSE_MESSAGE.FAILED_TO_GET_SINGLE_AUTHORS,
         STATUS_REPONSE.INTERNAL_SERVER_ERROR
       );
     }
@@ -79,7 +79,7 @@ class AuthorController {
         return sendResponse(
           res,
           STATUS_CODE.INTERNAL_SERVER_ERROR,
-          RESPONSE_MESSAGE.FAILED_TO_SIGNUP,
+          RESPONSE_MESSAGE.FAILED_TO_ADD_AUTHOR,
           STATUS_REPONSE.INTERNAL_SERVER_ERROR
         );
       }
@@ -99,7 +99,7 @@ class AuthorController {
       return sendResponse(
         res,
         STATUS_CODE.INTERNAL_SERVER_ERROR,
-        RESPONSE_MESSAGE.FAILED_TO_SIGNUP,
+        RESPONSE_MESSAGE.FAILED_TO_ADD_AUTHOR,
         STATUS_REPONSE.INTERNAL_SERVER_ERROR
       );
     }
