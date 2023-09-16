@@ -112,7 +112,7 @@ class BookController {
         }
     }
 
-    async updateBook(req, res) {
+    async editBook(req, res) {
         try {
             const response = req.body;
 

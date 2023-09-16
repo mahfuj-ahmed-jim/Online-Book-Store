@@ -14,7 +14,14 @@ const RESPONSE_MESSAGE = {
     FAILED_TO_ADD_AUTHOR: "Invalid author",
     AUTHOR_NAME_EXISTS: "Author already exists",
     AUTHOR_ADDED: "Author added successfully",
+    FAILED_TO_GET_USERS: "Failed to get users data",
+    FAILED_TO_GET_SINGLE_USER: "Failed to get user data",
+    USER_NOT_FOUND: "User not found",
+    FAILED_TO_UPDATE_USER: "Failed to update user",
     GET_ALL_USERS: "Successfully get all users data",
+    GET_USER: "Successfully get all user data",
+    USER_UPDATED: "Successfully update user",
+    PHONE_NUMBER_NOT_UNIQUE: "Phone number is not unique",
     GET_ALL_AUTHORS: "Successfully get all authors data",
     GET_AUTHOR: "Successfully get author data",
     FAILED_TO_GET_BOOKS: "Failed to get books data",
@@ -27,8 +34,6 @@ const RESPONSE_MESSAGE = {
     BOOK_DONT_EXISTS: "Book don't exists",
     GET_ALL_BOOKS: "Successfully get all books data",
     GET_BOOK: "Successfully get book data",
-    FAILED_TO_GET_USERS: "Failed to get users data",
-    FAILED_TO_GET_SINGLE_USERS: "Failed to get user data",
 };
 
 module.exports = RESPONSE_MESSAGE;

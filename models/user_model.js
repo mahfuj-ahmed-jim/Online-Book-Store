@@ -22,7 +22,6 @@ const userSchema = new mongoose.Schema(
     phoneNumber: {
       type: String,
       unique: true,
-      required: [true, "Phone Number is not provided"],
       validate: {
         validator: function (value) {
           const phoneNumberRegex = /^\d{11}$/;
@@ -50,6 +49,10 @@ const userSchema = new mongoose.Schema(
       default: 0,
       min: 0,
       required: true,
+    },
+    disable: {
+        type: Boolean,
+        default: false,
     },
   },
   {
