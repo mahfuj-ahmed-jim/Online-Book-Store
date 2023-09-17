@@ -24,13 +24,13 @@ const discountSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    bookIds: [
+    books: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "books",
       },
     ],
-    authorIds: [
+    authors: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "authors",

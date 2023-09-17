@@ -1,6 +1,6 @@
-const BookModel = require("../models/book_model");
 const AuthorModel = require("../models/author_model");
-const UserModel = require("../models/user_model");
+const BookModel = require("../models/book_model");
+const DiscountModel = require("../models/discount_model");
 const { sendResponse } = require("../utils/common");
 const STATUS_CODE = require("../constants/status_codes");
 const STATUS_REPONSE = require("../constants/status_response");
@@ -12,7 +12,7 @@ class BookController {
             const page = parseInt(req.query.page) || 1;
             const limit = parseInt(req.query.limit) || 10;
 
-            const books = await BookModel.find(
+            let books = await BookModel.find(
                 { disable: false },
                 { summary: false, createdAt: false, updatedAt: false, __v: false, disable: false }
             ).skip((page - 1) * limit)
@@ -20,11 +20,29 @@ class BookController {
                 .populate('author', '_id name country')
                 .exec();
 
+            const updatedBooks = await Promise.all(books.map(async (book) => {
+                const query = {
+                    $or: [
+                        { books: book._id },
+                        { authors: book.author },
+                    ],
+                };
+
+                let discount = await DiscountModel.findOne(query);
+                if (discount) {
+                    if (discount.discountPercentage) {
+                        book.price -= (book.price / 100) * discount.discountPercentage;
+                    }
+                }
+
+                return book;
+            }));
+
             return sendResponse(
                 res,
                 STATUS_CODE.OK,
                 RESPONSE_MESSAGE.GET_ALL_BOOKS,
-                books
+                updatedBooks
             );
         } catch (err) {
             return sendResponse(
@@ -172,35 +190,35 @@ class BookController {
 
     async deleteBook(req, res) {
         try {
-          const bookId = req.params.id; 
-    
-          const book = await BookModel.findOne({ _id: bookId });
-          if (!book) {
+            const bookId = req.params.id;
+
+            const book = await BookModel.findOne({ _id: bookId });
+            if (!book) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.NOT_FOUND,
+                    RESPONSE_MESSAGE.FAILED_TO_DELETE_BOOK,
+                    RESPONSE_MESSAGE.BOOK_DONT_EXISTS
+                );
+            }
+
+            await BookModel.deleteOne({ _id: bookId });
+
             return sendResponse(
-              res,
-              STATUS_CODE.NOT_FOUND,
-              RESPONSE_MESSAGE.FAILED_TO_DELETE_BOOK,
-              RESPONSE_MESSAGE.BOOK_DONT_EXISTS
+                res,
+                STATUS_CODE.NO_CONTENT,
+                RESPONSE_MESSAGE.BOOK_DELETED,
             );
-          }
-    
-          await BookModel.deleteOne({ _id: bookId });
-    
-          return sendResponse(
-            res,
-            STATUS_CODE.NO_CONTENT,
-            RESPONSE_MESSAGE.BOOK_DELETED,
-          );
         } catch (err) {
-          console.log(err);
-          return sendResponse(
-            res,
-            STATUS_CODE.INTERNAL_SERVER_ERROR,
-            RESPONSE_MESSAGE.FAILED_TO_DELETE_BOOK,
-            STATUS_REPONSE.INTERNAL_SERVER_ERROR
-          );
+            console.log(err);
+            return sendResponse(
+                res,
+                STATUS_CODE.INTERNAL_SERVER_ERROR,
+                RESPONSE_MESSAGE.FAILED_TO_DELETE_BOOK,
+                STATUS_REPONSE.INTERNAL_SERVER_ERROR
+            );
         }
-      }
+    }
 }
 
 module.exports = new BookController();
