@@ -11,6 +11,9 @@ class BookController {
         try {
             const page = parseInt(req.query.page) || 1;
             const limit = parseInt(req.query.limit) || 10;
+            let bookIds = [];
+            let authorIds = [];
+            let uniqueAuthors = new Set();
 
             let books = await BookModel.find(
                 { disable: false },
@@ -20,31 +23,49 @@ class BookController {
                 .populate('author', '_id name country')
                 .exec();
 
-            const updatedBooks = await Promise.all(books.map(async (book) => {
-                const query = {
-                    $or: [
-                        { books: book._id },
-                        { authors: book.author },
-                    ],
-                };
+            books.map(book => {
+                bookIds.push(book._id);
+                uniqueAuthors.add(book.author._id);
+            });
+            authorIds = Array.from(uniqueAuthors);
 
-                let discount = await DiscountModel.findOne(query);
+            const discountQuery = {
+                $or: [
+                    { books: { $in: bookIds } },
+                    { authors: { $in: authorIds } },
+                ],
+            };
+
+            const discounts = await DiscountModel.find(discountQuery);
+
+            const booksWithDiscounts = books.map((book) => {
+                const discount = discounts.find((discount) => {
+                    return (
+                        discount.books.includes(book._id) ||
+                        discount.authors.includes(book.author._id)
+                    );
+                });
+
                 if (discount) {
                     if (discount.discountPercentage) {
-                        book.price -= (book.price / 100) * discount.discountPercentage;
+                        const discountPrice = (book.price / 100) * discount.discountPercentage;
+                        return { ...book.toObject(), discountPrice: book.price - discountPrice };
+                    } else if (discount.discountAmount) {
+                        return { ...book.toObject(), discountPrice: book.price - discount.discountAmount };
                     }
+                } else {
+                    return book;
                 }
-
-                return book;
-            }));
+            });
 
             return sendResponse(
                 res,
                 STATUS_CODE.OK,
                 RESPONSE_MESSAGE.GET_ALL_BOOKS,
-                updatedBooks
+                booksWithDiscounts
             );
         } catch (err) {
+            console.log(err);
             return sendResponse(
                 res,
                 STATUS_CODE.INTERNAL_SERVER_ERROR,

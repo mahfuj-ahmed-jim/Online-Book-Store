@@ -13,7 +13,7 @@ class DiscountController {
             if (requestBody.type === 1) {
                 const existingDiscount = await DiscountModel.findOne({
                     type: 1,
-                    books: { $in: requestBody.bookIds },  
+                    books: { $in: requestBody.books },  
                     validTo: { $gte: new Date() }, 
                 });
 
@@ -28,7 +28,7 @@ class DiscountController {
             } else if (requestBody.type === 2) {
                 const existingDiscount = await DiscountModel.findOne({
                     type: 2,
-                    authors: { $in: requestBody.authorIds }, 
+                    authors: { $in: requestBody.authors }, 
                     validTo: { $gte: new Date() }, 
                 });
 
