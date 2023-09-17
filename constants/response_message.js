@@ -41,7 +41,11 @@ const RESPONSE_MESSAGE = {
     FAILED_TO_DELETE_BOOK: "Failed to delete book",
     BOOK_DELETED: "Successfully deleted book",
     FAILED_TO_ADD_ITEM_TO_CART: "Failed to add book to cart",
+    FAILED_TO_REMOVE_ITEM_TO_CART: "Failed to remove book to cart",
+    CART_DONT_EXISTS: "Cart don't exists",
+    BOOK_DONT_EXISTS_IN_CART: "Book don't exists in the cart",
     ADD_ITEM_TO_CART: "Successfully add book to cart",
+    REMOVE_ITEM_FROM_CART: "Successfully remove book from cart",
 };
 
 module.exports = RESPONSE_MESSAGE;

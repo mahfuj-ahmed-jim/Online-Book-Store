@@ -89,6 +89,85 @@ class CartController {
             );
         }
     }
+
+    async removeBookToCart(req, res) {
+        try {
+            const requestBody = req.body;
+
+            const user = await UserModel.findOne({ _id: requestBody.userId });
+            if (!user) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.NOT_FOUND,
+                    RESPONSE_MESSAGE.FAILED_TO_REMOVE_ITEM_TO_CART,
+                    RESPONSE_MESSAGE.USER_NOT_FOUND
+                );
+            }
+
+            const book = await BookModel.findOne({ _id: requestBody.bookId });
+            if (!book) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.NOT_FOUND,
+                    RESPONSE_MESSAGE.FAILED_TO_REMOVE_ITEM_TO_CART,
+                    RESPONSE_MESSAGE.BOOK_DONT_EXISTS
+                );
+            }
+
+            const currentCart = await CartModel.findOne({ user: requestBody.userId });
+            if (!currentCart) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.NOT_FOUND,
+                    RESPONSE_MESSAGE.FAILED_TO_REMOVE_ITEM_TO_CART,
+                    RESPONSE_MESSAGE.CART_DONT_EXISTS
+                );
+            }
+
+            const existingCartBook = currentCart.orderList.find(item => item.bookId.toString() === requestBody.bookId);
+            if (existingCartBook) {
+                if(existingCartBook.quantity > requestBody.quantity){
+                    existingCartBook.quantity -= requestBody.quantity;
+                }else if(existingCartBook.quantity === requestBody.quantity){
+                    console.log(currentCart.orderList);
+                    currentCart.orderList = currentCart.orderList.filter(item => item.bookId.toString() !== requestBody.bookId);
+                    console.log(currentCart.orderList);
+                }
+            } else {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.NOT_FOUND,
+                    RESPONSE_MESSAGE.FAILED_TO_REMOVE_ITEM_TO_CART,
+                    RESPONSE_MESSAGE.BOOK_DONT_EXISTS_IN_CART
+                );
+            }
+
+            const updatedCart = await currentCart.save();
+            if (!updatedCart) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.INTERNAL_SERVER_ERROR,
+                    RESPONSE_MESSAGE.FAILED_TO_REMOVE_ITEM_TO_CART,
+                    STATUS_REPONSE.INTERNAL_SERVER_ERROR
+                );
+            }
+
+            return sendResponse(
+                res,
+                STATUS_CODE.OK,
+                RESPONSE_MESSAGE.REMOVE_ITEM_FROM_CART,
+                updatedCart
+            );
+        } catch (err) {
+            console.log(err);
+            return sendResponse(
+                res,
+                STATUS_CODE.INTERNAL_SERVER_ERROR,
+                RESPONSE_MESSAGE.FAILED_TO_REMOVE_ITEM_TO_CART,
+                STATUS_REPONSE.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
 }
 
 module.exports = new CartController();
