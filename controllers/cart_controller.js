@@ -13,7 +13,13 @@ class CartController {
             const decodedToken = decodeToken(req);
             const userId = decodedToken.user.id;
 
-            const cart = await CartModel.findOne({ user: userId });
+            const cart = await CartModel.findOne({ user: userId })
+                .populate({
+                    path: 'orderList.book',
+                    model: 'books',
+                    select: 'id title author price',
+                })
+                .exec();
             if (!cart) {
                 return sendResponse(
                     res,
@@ -68,7 +74,7 @@ class CartController {
             if (!currentCart) {
                 const cart = {
                     user: requestBody.userId,
-                    orderList: [{ bookId: requestBody.bookId, quantity: requestBody.quantity }]
+                    orderList: [{ book: requestBody.bookId, quantity: requestBody.quantity }]
                 }
 
                 const createdCart = await CartModel.create(cart);
@@ -93,7 +99,7 @@ class CartController {
             if (existingCartBook) {
                 existingCartBook.quantity += requestBody.quantity;
             } else {
-                currentCart.orderList.push({ bookId: requestBody.bookId, quantity: requestBody.quantity });
+                currentCart.orderList.push({ book: requestBody.bookId, quantity: requestBody.quantity });
             }
 
             const updatedCart = await currentCart.save();
@@ -157,13 +163,13 @@ class CartController {
                 );
             }
 
-            const existingCartBook = currentCart.orderList.find(item => item.bookId.toString() === requestBody.bookId);
+            const existingCartBook = currentCart.orderList.find(item => item.book.toString() === requestBody.bookId);
             if (existingCartBook) {
                 if (existingCartBook.quantity > requestBody.quantity) {
                     existingCartBook.quantity -= requestBody.quantity;
                 } else if (existingCartBook.quantity === requestBody.quantity) {
                     console.log(currentCart.orderList);
-                    currentCart.orderList = currentCart.orderList.filter(item => item.bookId.toString() !== requestBody.bookId);
+                    currentCart.orderList = currentCart.orderList.filter(item => item.book.toString() !== requestBody.bookId);
                     console.log(currentCart.orderList);
                 }
             } else {
