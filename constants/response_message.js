@@ -39,7 +39,9 @@ const RESPONSE_MESSAGE = {
     GET_ALL_BOOKS: "Successfully get all books data",
     GET_BOOK: "Successfully get book data",
     FAILED_TO_DELETE_BOOK: "Failed to delete book",
-    BOOK_DELETED: "Successfully deleted book"
+    BOOK_DELETED: "Successfully deleted book",
+    FAILED_TO_ADD_ITEM_TO_CART: "Failed to add book to cart",
+    ADD_ITEM_TO_CART: "Successfully add book to cart",
 };
 
 module.exports = RESPONSE_MESSAGE;
