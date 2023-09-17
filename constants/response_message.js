@@ -46,6 +46,12 @@ const RESPONSE_MESSAGE = {
     BOOK_DONT_EXISTS_IN_CART: "Book don't exists in the cart",
     ADD_ITEM_TO_CART: "Successfully add book to cart",
     REMOVE_ITEM_FROM_CART: "Successfully remove book from cart",
+    FAILED_TO_VIEW_FROM_CART: "Failed to view your cart",
+    GET_USER_CART: "Successfully viewed your cart",
+    FAILED_TO_ADD_DISCOUNT: "Failed to add new discount",
+    DISCOUNT_ADDED_SUCCESSFULLY: "Successfully added discount",
+    DISCOUNT_ALREADY_EXISTS_FOR_BOOK: "Discount for these book is alrady on going",
+    DISCOUNT_ALREADY_EXISTS_FOR_AUTHOR: "Discount for these author is alrady on going"
 };
 
 module.exports = RESPONSE_MESSAGE;
