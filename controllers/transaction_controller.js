@@ -10,6 +10,50 @@ const RESPONSE_MESSAGE = require("../constants/response_message");
 const BookModel = require("../models/book_model");
 
 class TransactionController {
+    async getAllTransactions(req, res) {
+        try {
+            const transactions = await TransactionModel.find();
+            
+            return sendResponse(
+                res,
+                STATUS_CODE.OK,
+                RESPONSE_MESSAGE.GET_ALL_TRANSACTIONS,
+                transactions
+            );
+        } catch (err) {
+            console.log(err);
+            return sendResponse(
+                res,
+                STATUS_CODE.INTERNAL_SERVER_ERROR,
+                RESPONSE_MESSAGE.FAILED_TO_GET_ALL_TRANSACTION,
+                STATUS_RESPONSE.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    async getTransactionsForUser(req, res) {
+        try {
+            const userId = req.params.id;
+
+            const transactions = await TransactionModel.find({user: userId});
+            
+            return sendResponse(
+                res,
+                STATUS_CODE.OK,
+                RESPONSE_MESSAGE.GET_ALL_TRANSACTIONS,
+                transactions
+            );
+        } catch (err) {
+            console.log(err);
+            return sendResponse(
+                res,
+                STATUS_CODE.INTERNAL_SERVER_ERROR,
+                RESPONSE_MESSAGE.FAILED_TO_GET_ALL_TRANSACTION,
+                STATUS_RESPONSE.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
     async createTransaction(req, res) {
         try {
             const decodedToken = decodeToken(req);
@@ -92,7 +136,6 @@ class TransactionController {
             const booksWithDiscounts = countBookDiscount(books, discounts);
 
             cart.orderList.map((item, index) => {
-                console.log(item);
                 item = {
                     ...item.toObject(),
                     book: booksWithDiscounts[index],

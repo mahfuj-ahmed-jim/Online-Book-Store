@@ -55,7 +55,9 @@ const RESPONSE_MESSAGE = {
     FAILED_TO_CREATE_TRANSACTION: "Failed to proceed the transaction",
     CREATE_TRANSACTION: "Successfully proceed the transaction",
     INSUFFECIENT_BALANCE: "Insuffecient balance to proceed the transaction",
-    OUT_OF_STOCK: "Out of Stock"
+    OUT_OF_STOCK: "Out of Stock",
+    FAILED_TO_GET_ALL_TRANSACTION: "Failed to get transactions data",
+    GET_ALL_TRANSACTIONS: "Successfully get all transactions data"
 };
 
 module.exports = RESPONSE_MESSAGE;
