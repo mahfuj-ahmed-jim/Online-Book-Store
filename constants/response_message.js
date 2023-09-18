@@ -57,7 +57,9 @@ const RESPONSE_MESSAGE = {
     INSUFFECIENT_BALANCE: "Insuffecient balance to proceed the transaction",
     OUT_OF_STOCK: "Out of Stock",
     FAILED_TO_GET_ALL_TRANSACTION: "Failed to get transactions data",
-    GET_ALL_TRANSACTIONS: "Successfully get all transactions data"
+    GET_ALL_TRANSACTIONS: "Successfully get all transactions data",
+    FAILED_TO_ADD_REVIEW: "Failed to add review",
+    ADD_REVIEW: "Successfully added review",
 };
 
 module.exports = RESPONSE_MESSAGE;

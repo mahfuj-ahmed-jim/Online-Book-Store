@@ -1,4 +1,3 @@
-const BookModel = require("../models/book_model");
 const DiscountModel = require("../models/discount_model");
 const { sendResponse } = require("../utils/common");
 const STATUS_CODE = require("../constants/status_codes");

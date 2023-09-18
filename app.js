@@ -3,6 +3,7 @@ const authorRoutes = require("./routes/author_routes.js");
 const bookRoutes = require("./routes/book_routes.js");
 const cartRoutes = require("./routes/cart_routes.js");
 const discountRoutes = require("./routes/discount_routes.js");
+const reviewRoutes = require("./routes/review_routes.js");
 const transactionRoutes = require("./routes/transaction_routes.js");
 const userRoutes = require("./routes/user_routes.js");
 const { databaseConnection } = require("./config/database.js");
@@ -22,6 +23,7 @@ app.use("/author", authorRoutes);
 app.use("/book", bookRoutes);
 app.use("/cart", cartRoutes);
 app.use("/discount", discountRoutes);
+app.use("/review", reviewRoutes);
 app.use("/transaction", transactionRoutes);
 app.use("/user", userRoutes); 
 
