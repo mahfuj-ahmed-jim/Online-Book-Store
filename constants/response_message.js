@@ -51,7 +51,11 @@ const RESPONSE_MESSAGE = {
     FAILED_TO_ADD_DISCOUNT: "Failed to add new discount",
     DISCOUNT_ADDED_SUCCESSFULLY: "Successfully added discount",
     DISCOUNT_ALREADY_EXISTS_FOR_BOOK: "Discount for some of these books is alrady on going",
-    DISCOUNT_ALREADY_EXISTS_FOR_AUTHOR: "Discount for these author is alrady on going"
+    DISCOUNT_ALREADY_EXISTS_FOR_AUTHOR: "Discount for these author is alrady on going",
+    FAILED_TO_CREATE_TRANSACTION: "Failed to proceed the transaction",
+    CREATE_TRANSACTION: "Successfully proceed the transaction",
+    INSUFFECIENT_BALANCE: "Insuffecient balance to proceed the transaction",
+    OUT_OF_STOCK: "Out of Stock"
 };
 
 module.exports = RESPONSE_MESSAGE;

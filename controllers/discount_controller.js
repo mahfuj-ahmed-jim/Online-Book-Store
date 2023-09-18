@@ -2,7 +2,7 @@ const BookModel = require("../models/book_model");
 const DiscountModel = require("../models/discount_model");
 const { sendResponse } = require("../utils/common");
 const STATUS_CODE = require("../constants/status_codes");
-const STATUS_REPONSE = require("../constants/status_response");
+const STATUS_RESPONSE = require("../constants/status_response");
 const RESPONSE_MESSAGE = require("../constants/response_message");
 
 class DiscountController {
