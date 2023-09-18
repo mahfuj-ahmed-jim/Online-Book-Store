@@ -1,7 +1,8 @@
 const BookModel = require("../models/book_model");
 const CartModel = require("../models/cart_model");
+const DiscountModel = require("../models/discount_model");
 const UserModel = require("../models/user_model");
-const { sendResponse } = require("../utils/common");
+const { sendResponse, discountQuery, countBookDiscount } = require("../utils/common");
 const { decodeToken } = require("../utils/token_handler");
 const STATUS_CODE = require("../constants/status_codes");
 const STATUS_REPONSE = require("../constants/status_response");
@@ -12,12 +13,19 @@ class CartController {
         try {
             const decodedToken = decodeToken(req);
             const userId = decodedToken.user.id;
+            let books = [];
+            let bookIds = [];
+            let authorIds = [];
+            let uniqueAuthors = new Set();
 
             const cart = await CartModel.findOne({ user: userId })
                 .populate({
-                    path: 'orderList.book',
-                    model: 'books',
-                    select: 'id title author price',
+                    path: "orderList.book",
+                    select: "_id title price author",
+                    populate: {
+                        path: "author",
+                        select: "_id name",
+                    },
                 })
                 .exec();
             if (!cart) {
@@ -29,11 +37,27 @@ class CartController {
                 );
             }
 
+            cart.orderList.map(cart => {
+                books.push(cart.book);
+                bookIds.push(cart.book._id);
+                uniqueAuthors.add(cart.book.author._id);
+            });
+            authorIds = Array.from(uniqueAuthors);
+
+            const query = discountQuery(bookIds, authorIds);
+            const discounts = await DiscountModel.find(query);
+            const booksWithDiscounts = countBookDiscount(books, discounts);
+
+            const cartOrderListWithDiscountPrice = cart.orderList.map((item, index) => ({
+                ...item.toObject(),
+                book: booksWithDiscounts[index],
+            }));
+
             return sendResponse(
                 res,
                 STATUS_CODE.OK,
                 RESPONSE_MESSAGE.GET_USER_CART,
-                cart.orderList
+                cartOrderListWithDiscountPrice
             );
         } catch (err) {
             console.log(err);
@@ -95,7 +119,7 @@ class CartController {
                 );
             }
 
-            const existingCartBook = currentCart.orderList.find(item => item.bookId.toString() === requestBody.bookId);
+            const existingCartBook = currentCart.orderList.find(item => item.book.toString() === requestBody.bookId);
             if (existingCartBook) {
                 existingCartBook.quantity += requestBody.quantity;
             } else {
