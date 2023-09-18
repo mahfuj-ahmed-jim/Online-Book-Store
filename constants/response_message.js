@@ -50,7 +50,7 @@ const RESPONSE_MESSAGE = {
     GET_USER_CART: "Successfully viewed your cart",
     FAILED_TO_ADD_DISCOUNT: "Failed to add new discount",
     DISCOUNT_ADDED_SUCCESSFULLY: "Successfully added discount",
-    DISCOUNT_ALREADY_EXISTS_FOR_BOOK: "Discount for these book is alrady on going",
+    DISCOUNT_ALREADY_EXISTS_FOR_BOOK: "Discount for some of these books is alrady on going",
     DISCOUNT_ALREADY_EXISTS_FOR_AUTHOR: "Discount for these author is alrady on going"
 };
 

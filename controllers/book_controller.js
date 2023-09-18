@@ -17,7 +17,7 @@ class BookController {
 
             let books = await BookModel.find(
                 { disable: false },
-                { summary: false, createdAt: false, updatedAt: false, __v: false, disable: false }
+                { _id: true, title: true, price: true, discountPrice: true, genre: true }
             ).skip((page - 1) * limit)
                 .limit(limit)
                 .populate('author', '_id name country')
@@ -52,20 +52,41 @@ class BookController {
 
     async getBookById(req, res) {
         try {
-            const bookId = req.query.id;
+            const bookId = req.params.id;
+            let bookIds = [];
+            let authorIds = [];
 
-            const books = await BookModel.findOne(
+            const book = await BookModel.findOne(
                 { _id: bookId, disable: false },
                 { createdAt: false, updatedAt: false, __v: false, disable: false }
             ).populate('author', '_id name about country').exec();
+
+            console.log(book);
+
+            bookIds.push(book._id);
+            authorIds.push(book.author._id);
+
+            const query = discountQuery(bookIds, authorIds);
+            const discounts = await DiscountModel.find(query);
+            const bookWithDiscounts = countBookDiscount([book], discounts);
+
+            if (bookWithDiscounts.length !== 1) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.INTERNAL_SERVER_ERROR,
+                    RESPONSE_MESSAGE.FAILED_TO_GET_SINGLE_BOOK,
+                    STATUS_REPONSE.INTERNAL_SERVER_ERROR
+                );
+            }
 
             return sendResponse(
                 res,
                 STATUS_CODE.OK,
                 RESPONSE_MESSAGE.GET_BOOK,
-                books
+                bookWithDiscounts[0]
             );
         } catch (err) {
+            console.log(err);
             return sendResponse(
                 res,
                 STATUS_CODE.INTERNAL_SERVER_ERROR,
