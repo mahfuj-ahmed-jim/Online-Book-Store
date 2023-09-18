@@ -35,6 +35,16 @@ class ReviewController {
                 );
             }
 
+            const existingReview = await ReviewModel.findOne({ user: userId, book: book._id });
+            if (existingReview) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.CONFLICT,
+                    RESPONSE_MESSAGE.FAILED_TO_ADD_REVIEW,
+                    RESPONSE_MESSAGE.REVIEW_EXISTS
+                );
+            }
+
             const review = {
                 user: userId,
                 book: book._id,
@@ -43,7 +53,7 @@ class ReviewController {
             }
 
             const createdReview = await ReviewModel.create(review);
-            if(!createdReview){
+            if (!createdReview) {
                 return sendResponse(
                     res,
                     STATUS_CODE.INTERNAL_SERVER_ERROR,
@@ -64,6 +74,56 @@ class ReviewController {
                 res,
                 STATUS_CODE.INTERNAL_SERVER_ERROR,
                 RESPONSE_MESSAGE.FAILED_TO_ADD_REVIEW,
+                STATUS_RESPONSE.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    async editReview(req, res) {
+        try {
+            const requestBody = req.body;
+            const decodedToken = decodeToken(req);
+            const userId = decodedToken.user.id;
+
+            const user = await UserModel.findOne({ _id: userId });
+            if (!user) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.NOT_FOUND,
+                    RESPONSE_MESSAGE.FAILED_TO_UPDATE_REVIEW,
+                    RESPONSE_MESSAGE.USER_NOT_FOUND
+                );
+            }
+
+            const existingReview = await ReviewModel.findOne({ _id: requestBody.reviewId });
+            if (!existingReview) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.CONFLICT,
+                    RESPONSE_MESSAGE.FAILED_TO_UPDATE_REVIEW,
+                    RESPONSE_MESSAGE.REVIEW_DONT_EXISTS
+                );
+            }
+
+            existingReview.comment = requestBody.comment;
+            existingReview.rating = requestBody.rating;
+            existingReview.time = new Date();
+
+            await existingReview.save();
+
+            return sendResponse(
+                res,
+                STATUS_CODE.OK,
+                RESPONSE_MESSAGE.UPDATE_REVIEW,
+                existingReview
+            );
+
+        } catch (err) {
+            console.error(err);
+            return sendResponse(
+                res,
+                STATUS_CODE.INTERNAL_SERVER_ERROR,
+                RESPONSE_MESSAGE.FAILED_TO_UPDATE_REVIEW,
                 STATUS_RESPONSE.INTERNAL_SERVER_ERROR
             );
         }

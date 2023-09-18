@@ -60,6 +60,10 @@ const RESPONSE_MESSAGE = {
     GET_ALL_TRANSACTIONS: "Successfully get all transactions data",
     FAILED_TO_ADD_REVIEW: "Failed to add review",
     ADD_REVIEW: "Successfully added review",
+    UPDATE_REVIEW: "Successfully updated review",
+    REVIEW_EXISTS: "Your review already exists for this book",
+    REVIEW_DONT_EXISTS: "Review don't exists",
+    FAILED_TO_UPDATE_REVIEW: "Failed to update review",
 };
 
 module.exports = RESPONSE_MESSAGE;
