@@ -128,6 +128,49 @@ class ReviewController {
             );
         }
     }
+
+    async deleteReview(req, res) {
+        try {
+            const reviewId = req.params.id;
+            const decodedToken = decodeToken(req);
+            const userId = decodedToken.user.id;
+
+            const user = await UserModel.findOne({ _id: userId });
+            if (!user) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.NOT_FOUND,
+                    RESPONSE_MESSAGE.FAILED_TO_DELETE_REVIEW,
+                    RESPONSE_MESSAGE.USER_NOT_FOUND
+                );
+            }
+
+            const existingReview = await ReviewModel.findOneAndDelete({ _id: reviewId });
+            if (!existingReview) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.CONFLICT,
+                    RESPONSE_MESSAGE.FAILED_TO_DELETE_REVIEW,
+                    RESPONSE_MESSAGE.REVIEW_DONT_EXISTS
+                );
+            }
+
+            return sendResponse(
+                res,
+                STATUS_CODE.OK,
+                RESPONSE_MESSAGE.DELETE_REVIEW
+            );
+
+        } catch (err) {
+            console.error(err);
+            return sendResponse(
+                res,
+                STATUS_CODE.INTERNAL_SERVER_ERROR,
+                RESPONSE_MESSAGE.FAILED_TO_DELETE_REVIEW,
+                STATUS_RESPONSE.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
 }
 
 module.exports = new ReviewController();
