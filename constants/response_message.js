@@ -33,6 +33,7 @@ const RESPONSE_MESSAGE = {
     GET_ALL_AUTHORS: "Successfully get all authors data",
     GET_AUTHOR: "Successfully get author data",
     UNAVAILABLE_BOOKS: "Some books are unavailable",
+    INVALID_SORT_PROPERTY: "Invalid sorting property",
     FAILED_TO_GET_BOOKS: "Failed to get books data",
     FAILED_TO_GET_SINGLE_BOOK: "Failed to get book data",
     FAILED_TO_ADD_BOOK: "Failed to add book",

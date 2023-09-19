@@ -9,11 +9,35 @@ const RESPONSE_MESSAGE = require("../constants/response_message");
 class BookController {
     async getAllBooks(req, res) {
         try {
+            const { sortProperty } = req.query;
             const page = parseInt(req.query.page) || 1;
             const limit = parseInt(req.query.limit) || 10;
+            const sortOrder = req.query.sortOrder || "asc";
+            const genreFilter = req.query.genreFilter || "";
             let bookIds = [];
             let authorIds = [];
             let uniqueAuthors = new Set();
+            let sortStage = {};
+
+            if (sortProperty) {
+                if (sortProperty !== "price" || sortProperty !== "rating" || sortProperty !== "price" || sortProperty !== "stock" ||
+                    sortProperty !== "totalSell" || sortOrder !== "asc" || sortOrder !== "desc") {
+
+                    if(sortOrder === "desc"){
+                        sortStage[sortProperty] = -1;
+                    }else{
+                        sortStage[sortProperty] = 1;
+                    }
+
+                } else {
+                    return sendResponse(
+                        res,
+                        STATUS_CODE.UNPROCESSABLE_ENTITY,
+                        RESPONSE_MESSAGE.FAILED_TO_GET_BOOKS,
+                        RESPONSE_MESSAGE.INVALID_SORT_PROPERTY
+                    );
+                }
+            }
 
             let books = await BookModel.aggregate([
                 {
@@ -28,7 +52,14 @@ class BookController {
                     $unwind: "$author"
                 },
                 {
-                    $match: { "author.disable": false }
+                    $match: { "author.disable": false, disable: false }
+                },
+                {
+                    $match: { 
+                        $and: [
+                            { genre: { $regex: genreFilter, $options: "i" } }
+                        ]
+                    }
                 },
                 {
                     $project: {
@@ -40,6 +71,9 @@ class BookController {
                         "author.name": 1,
                         "author.country": 1
                     }
+                },
+                {
+                    $sort: sortStage
                 },
                 {
                     $skip: (page - 1) * limit
@@ -63,7 +97,12 @@ class BookController {
                 res,
                 STATUS_CODE.OK,
                 RESPONSE_MESSAGE.GET_ALL_BOOKS,
-                booksWithDiscounts
+                {
+                    page: page,
+                    bookPerPage: limit,
+                    totalBooks: booksWithDiscounts.length,
+                    books: booksWithDiscounts
+                }
             );
         } catch (err) {
             console.log(err);
