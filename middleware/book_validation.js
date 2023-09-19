@@ -36,19 +36,13 @@ const validateBookData = (req, res, next) => {
         }
     }
 
-    if (!totalSell) {
-        errors.totalSell = "Total sell is required.";
-    } else if (typeof totalSell !== "number" || totalSell < 1) {
-        errors.totalSell = "Total sell must be a number greater than or equal to 1";
-    }
-
-    if (!price) {
+    if (!price && price !== 0) {
         errors.price = "Price is required.";
     } else if (typeof price !== "number" || price < 1) {
         errors.price = "Price must be a number greater than or equal to 1";
     }
 
-    if (!stock) {
+    if (!stock && stock !== 0) {
         errors.stock = "Stock is required.";
     } else if (typeof stock !== "number" || stock < 1) {
         errors.stock = "Stock must be a number greater than or equal to 1";

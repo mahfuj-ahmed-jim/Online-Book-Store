@@ -7,6 +7,7 @@ const { decodeToken } = require("../utils/token_handler");
 const STATUS_CODE = require("../constants/status_codes");
 const STATUS_REPONSE = require("../constants/status_response");
 const RESPONSE_MESSAGE = require("../constants/response_message");
+const mongoose = require("mongoose");
 
 class CartController {
     async viewUserCart(req, res) {
@@ -17,6 +18,15 @@ class CartController {
             let bookIds = [];
             let authorIds = [];
             let uniqueAuthors = new Set();
+
+            if (userId && userId !== req.params.id) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.UNAUTHORIZED,
+                    STATUS_REPONSE.UNAUTHORIZED,
+                    RESPONSE_MESSAGE.UNAUTHORIZED
+                );
+            }
 
             const cart = await CartModel.findOne({ user: userId })
                 .populate({
@@ -73,14 +83,26 @@ class CartController {
     async addBookToCart(req, res) {
         try {
             const requestBody = req.body;
+            const decodedToken = decodeToken(req);
+            const userId = decodedToken.user.id;
 
-            const user = await UserModel.findOne({ _id: requestBody.userId });
+            const user = await UserModel.findOne({ _id: userId });
             if (!user) {
                 return sendResponse(
                     res,
                     STATUS_CODE.NOT_FOUND,
                     RESPONSE_MESSAGE.FAILED_TO_ADD_ITEM_TO_CART,
                     RESPONSE_MESSAGE.USER_NOT_FOUND
+                );
+            }
+
+            const isIdValid = mongoose.Types.ObjectId.isValid(requestBody.bookId);
+            if (!isIdValid) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.NOT_FOUND,
+                    RESPONSE_MESSAGE.FAILED_TO_ADD_ITEM_TO_CART,
+                    RESPONSE_MESSAGE.BOOK_DONT_EXISTS
                 );
             }
 
@@ -94,7 +116,7 @@ class CartController {
                 );
             }
 
-            const currentCart = await CartModel.findOne({ user: requestBody.userId });
+            const currentCart = await CartModel.findOne({ user: userId });
             if (!currentCart) {
                 const cart = {
                     user: requestBody.userId,
@@ -156,8 +178,10 @@ class CartController {
     async removeBookToCart(req, res) {
         try {
             const requestBody = req.body;
+            const decodedToken = decodeToken(req);
+            const userId = decodedToken.user.id;
 
-            const user = await UserModel.findOne({ _id: requestBody.userId });
+            const user = await UserModel.findOne({ _id: userId });
             if (!user) {
                 return sendResponse(
                     res,
@@ -167,17 +191,7 @@ class CartController {
                 );
             }
 
-            const book = await BookModel.findOne({ _id: requestBody.bookId });
-            if (!book) {
-                return sendResponse(
-                    res,
-                    STATUS_CODE.NOT_FOUND,
-                    RESPONSE_MESSAGE.FAILED_TO_REMOVE_ITEM_TO_CART,
-                    RESPONSE_MESSAGE.BOOK_DONT_EXISTS
-                );
-            }
-
-            const currentCart = await CartModel.findOne({ user: requestBody.userId });
+            const currentCart = await CartModel.findOne({ user: userId });
             if (!currentCart) {
                 return sendResponse(
                     res,
@@ -192,9 +206,7 @@ class CartController {
                 if (existingCartBook.quantity > requestBody.quantity) {
                     existingCartBook.quantity -= requestBody.quantity;
                 } else if (existingCartBook.quantity === requestBody.quantity) {
-                    console.log(currentCart.orderList);
                     currentCart.orderList = currentCart.orderList.filter(item => item.book.toString() !== requestBody.bookId);
-                    console.log(currentCart.orderList);
                 }
             } else {
                 return sendResponse(
