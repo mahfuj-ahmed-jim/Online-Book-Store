@@ -1,9 +1,11 @@
 const DiscountController = require("../controllers/discount_controller");
+const { validateToken } = require("../middleware/token_validation");
+const { validateDiscountData } = require("../middleware/discount_validation");
 const express = require("express");
 const router = express.Router();
 
-router.get("/all", DiscountController.getAllDiscount);
-router.post("/add", DiscountController.addDiscount);
-router.put("/update", DiscountController.updateDiscount);
+router.get("/all", validateToken, DiscountController.getAllDiscount);
+router.post("/add", validateToken, validateDiscountData, DiscountController.addDiscount);
+router.put("/update", validateToken, DiscountController.updateDiscount);
 
 module.exports = router;

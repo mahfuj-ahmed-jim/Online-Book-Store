@@ -1,5 +1,6 @@
 const DiscountModel = require("../models/discount_model");
 const { sendResponse } = require("../utils/common");
+const { decodeToken } = require("../utils/token_handler");
 const STATUS_CODE = require("../constants/status_codes");
 const STATUS_RESPONSE = require("../constants/status_response");
 const RESPONSE_MESSAGE = require("../constants/response_message");
@@ -7,6 +8,16 @@ const RESPONSE_MESSAGE = require("../constants/response_message");
 class DiscountController {
     async getAllDiscount(req, res) {
         try {
+            const decodedToken = decodeToken(req);
+            if (decodedToken.role !== "admin" && !decodedToken.admin.superAdmin) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.UNAUTHORIZED,
+                    STATUS_RESPONSE.UNAUTHORIZED,
+                    RESPONSE_MESSAGE.UNAUTHORIZED
+                );
+            }
+
             const discounts = await DiscountModel.find({}, { createdAt: false, updatedAt: false, __v: false })
                 .populate({ path: "books", model: "books", select: "_id title price stock totalSell" })
                 .populate({ path: "authors", model: "authors", select: "_id name country " })
