@@ -4,6 +4,7 @@ const { sendResponse } = require("../utils/common");
 const STATUS_CODE = require("../constants/status_codes");
 const STATUS_REPONSE = require("../constants/status_response");
 const RESPONSE_MESSAGE = require("../constants/response_message");
+const mongoose = require("mongoose");
 
 class AuthorController {
   async getAllAuthor(req, res) {
@@ -12,7 +13,7 @@ class AuthorController {
       const limit = parseInt(req.query.limit) || 10;
 
       const authors = await AuthorModel.find(
-        {disable: false},
+        { disable: false },
         { createdAt: false, updatedAt: false, __v: false }
       ).skip((page - 1) * limit)
         .limit(limit)
@@ -36,12 +37,31 @@ class AuthorController {
 
   async getAuthorById(req, res) {
     try {
-      const authorId = req.query.id;
+      const authorId = req.params.id;
+
+      const isIdValid = mongoose.Types.ObjectId.isValid(authorId);
+      if (!isIdValid) {
+        return sendResponse(
+          res,
+          STATUS_CODE.NOT_FOUND,
+          RESPONSE_MESSAGE.FAILED_TO_GET_SINGLE_AUTHORS,
+          RESPONSE_MESSAGE.AUTHOR_DONT_EXISTS
+        );
+      }
 
       const author = await AuthorModel.findOne(
         { _id: authorId, disable: false },
         { createdAt: false, updatedAt: false, __v: false }
       ).exec();
+
+      if (!author) {
+        return sendResponse(
+          res,
+          STATUS_CODE.NOT_FOUND,
+          RESPONSE_MESSAGE.FAILED_TO_GET_SINGLE_AUTHORS,
+          RESPONSE_MESSAGE.AUTHOR_DONT_EXISTS
+        );
+      }
 
       return sendResponse(
         res,
@@ -50,6 +70,7 @@ class AuthorController {
         author
       );
     } catch (err) {
+      console.log(err);
       return sendResponse(
         res,
         STATUS_CODE.INTERNAL_SERVER_ERROR,

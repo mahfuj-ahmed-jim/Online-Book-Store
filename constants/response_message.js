@@ -1,8 +1,9 @@
 const RESPONSE_MESSAGE = {
     INVALID_ROLE: "Invalid Role",
     BLOCK_ACCOUNT: "Account has been blocked for next 5 minutes",
-    ACCOUNT_NOT_VERIFIED: "Account is not verified", 
+    ACCOUNT_DISABLE: "Account is currently disable", 
     EMAIL_ALREADY_EXISTS: "Email already exists",
+    PHONE_NUMBER_ALREADY_EXISTS: "Phone Number already exists",
     EMAIL_DOESNT_EXIST: "Email doesn't exists",
     FAILED_TO_SIGNUP: "Failed to signup",
     SIGNUP_SUCCESSFUL: "Successfully signup",
@@ -13,6 +14,7 @@ const RESPONSE_MESSAGE = {
     FAILED_TO_GET_AUTHORS: "Failed to get authors data",
     FAILED_TO_GET_SINGLE_AUTHORS: "Failed to get author data",
     FAILED_TO_ADD_AUTHOR: "Invalid author",
+    AUTHOR_DONT_EXISTS: "Author don't exists",
     AUTHOR_NAME_EXISTS: "Author already exists",
     AUTHOR_ADDED: "Author added successfully",
     FAILED_TO_GET_USERS: "Failed to get users data",

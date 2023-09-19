@@ -1,9 +1,11 @@
 const AuthorController = require("../controllers/author_controller");
+const { validateToken } = require("../middleware/token_validation");
+const { validateAuthorData } = require("../middleware/author_validation");
 const express = require("express");
 const router = express.Router();
 
 router.get("/all", AuthorController.getAllAuthor);
-router.get("/", AuthorController.getAuthorById);
-router.post("/add", AuthorController.addNewAuthor);
+router.get("/:id", AuthorController.getAuthorById);
+router.post("/add", validateToken, validateAuthorData, AuthorController.addNewAuthor);
 
 module.exports = router;

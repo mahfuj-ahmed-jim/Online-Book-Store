@@ -17,9 +17,6 @@ class BookController {
 
             let books = await BookModel.aggregate([
                 {
-                    $match: { disable: false }
-                },
-                {
                     $lookup: {
                         from: "authors",
                         localField: "author",
@@ -78,7 +75,6 @@ class BookController {
             );
         }
     }
-
 
     async getBookById(req, res) {
         try {

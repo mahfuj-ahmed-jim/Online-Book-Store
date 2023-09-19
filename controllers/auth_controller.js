@@ -14,19 +14,6 @@ class AuthController {
       const requestBody = req.body;
       let token, responseData;
 
-      if (requestBody.role == 1) {
-        const decodedToken = decodeToken(req);
-
-        if (!decodedToken.admin || !decodedToken.admin.superAdmin) {
-          return sendResponse(
-            res,
-            STATUS_CODE.UNAUTHORIZED,
-            STATUS_REPONSE.UNAUTHORIZED,
-            RESPONSE_MESSAGE.UNAUTHORIZED
-          );
-        }
-      }
-
       const isEmailExists = await AuthModel.findOne({ email: requestBody.email });
       if (isEmailExists) {
         return sendResponse(
@@ -65,6 +52,16 @@ class AuthController {
           superAdmin: requestBody.superAdmin,
         };
       } else if (requestBody.role === 2) {
+        const isPhoneNumberExists = await UserModel.findOne({ phoneNumber: requestBody.phoneNumber });
+        if (isPhoneNumberExists) {
+          return sendResponse(
+            res,
+            STATUS_CODE.CONFLICT,
+            RESPONSE_MESSAGE.FAILED_TO_SIGNUP,
+            RESPONSE_MESSAGE.PHONE_NUMBER_ALREADY_EXISTS
+          );
+        }
+
         const user = {
           name: requestBody.name,
           role: requestBody.role,
@@ -155,7 +152,7 @@ class AuthController {
           res,
           STATUS_CODE.FORBIDDEN,
           RESPONSE_MESSAGE.FAILED_TO_LOGIN,
-          RESPONSE_MESSAGE.ACCOUNT_NOT_VERIFIED
+          RESPONSE_MESSAGE.ACCOUNT_DISABLE
         );
       }
 
@@ -176,7 +173,6 @@ class AuthController {
         auth.loginAttempts = (auth.loginAttempts || 0) + 1;
 
         if (auth.loginAttempts >= 5) {
-          // const blockUntil = new Date(Date.now() + 5 * 60 * 1000);
           auth.blockUntil = new Date(Date.now() + 5 * 60 * 1000);
           auth.loginAttempts = 0;
 
@@ -192,7 +188,7 @@ class AuthController {
         await auth.save();
         return sendResponse(
           res,
-          HTTP_STATUS.UNAUTHORIZED,
+          STATUS_CODE.UNAUTHORIZED,
           RESPONSE_MESSAGE.FAILED_TO_LOGIN,
           RESPONSE_MESSAGE.INVALID_CREDENTIAL
         );
