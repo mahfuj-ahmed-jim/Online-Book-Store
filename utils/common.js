@@ -1,3 +1,5 @@
+const mongoose = require("mongoose");
+
 const sendResponse = (res, statusCode, message, result = null) => {
   const response = {};
   if (statusCode >= 400) {
@@ -37,12 +39,16 @@ const countBookDiscount = (books, discounts) => {
       );
     });
 
+    if (book instanceof mongoose.Document) {
+      book = book.toObject()
+    } 
+
     if (discount) {
       if (discount.discountPercentage) {
         const discountPrice = (book.price / 100) * discount.discountPercentage;
-        return { ...book.toObject(), discountPrice: book.price - discountPrice };
+        return { ...book, discountPrice: book.price - discountPrice };
       } else if (discount.discountAmount) {
-        return { ...book.toObject(), discountPrice: book.price - discount.discountAmount };
+        return { ...book, discountPrice: book.price - discount.discountAmount };
       }
     } else {
       return book;

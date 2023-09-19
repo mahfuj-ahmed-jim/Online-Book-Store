@@ -20,6 +20,7 @@ class UserController {
         users
       );
     } catch (err) {
+      console.log(err);
       return sendResponse(
         res,
         STATUS_CODE.INTERNAL_SERVER_ERROR,

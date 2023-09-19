@@ -15,13 +15,42 @@ class BookController {
             let authorIds = [];
             let uniqueAuthors = new Set();
 
-            let books = await BookModel.find(
-                { disable: false },
-                { _id: true, title: true, price: true, discountPrice: true, genre: true }
-            ).skip((page - 1) * limit)
-                .limit(limit)
-                .populate('author', '_id name country')
-                .exec();
+            let books = await BookModel.aggregate([
+                {
+                    $match: { disable: false }
+                },
+                {
+                    $lookup: {
+                        from: "authors",
+                        localField: "author",
+                        foreignField: "_id",
+                        as: "author"
+                    }
+                },
+                {
+                    $unwind: "$author"
+                },
+                {
+                    $match: { "author.disable": false }
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        title: 1,
+                        price: 1,
+                        genre: 1,
+                        "author._id": 1,
+                        "author.name": 1,
+                        "author.country": 1
+                    }
+                },
+                {
+                    $skip: (page - 1) * limit
+                },
+                {
+                    $limit: limit
+                }
+            ]);
 
             books.map(book => {
                 bookIds.push(book._id);
@@ -50,6 +79,7 @@ class BookController {
         }
     }
 
+
     async getBookById(req, res) {
         try {
             const bookId = req.params.id;
@@ -60,8 +90,6 @@ class BookController {
                 { _id: bookId, disable: false },
                 { createdAt: false, updatedAt: false, __v: false, disable: false }
             ).populate('author', '_id name about country').exec();
-
-            console.log(book);
 
             bookIds.push(book._id);
             authorIds.push(book.author._id);
@@ -149,7 +177,7 @@ class BookController {
 
     async editBook(req, res) {
         try {
-            const response = req.body;z
+            const response = req.body;
 
             const book = await BookModel.findOne({ _id: response.bookId });
             if (!book) {

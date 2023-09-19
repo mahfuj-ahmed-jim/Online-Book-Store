@@ -18,14 +18,14 @@ app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/auth", authRoutes);
-app.use("/author", authorRoutes);
-app.use("/book", bookRoutes);
-app.use("/cart", cartRoutes);
-app.use("/discount", discountRoutes);
-app.use("/review", reviewRoutes);
-app.use("/transaction", transactionRoutes);
-app.use("/user", userRoutes); 
+app.use("/api/auth", authRoutes);
+app.use("/api/author", authorRoutes);
+app.use("/api/book", bookRoutes);
+app.use("/api/cart", cartRoutes);
+app.use("/api/discount", discountRoutes);
+app.use("/api/review", reviewRoutes);
+app.use("/api/transaction", transactionRoutes);
+app.use("/api/user", userRoutes); 
 
 app.use((req, res) => {
   return sendResponse(res, 404, "Not Found", "Request Not Found");
