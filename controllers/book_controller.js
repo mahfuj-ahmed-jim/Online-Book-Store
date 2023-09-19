@@ -3,7 +3,7 @@ const BookModel = require("../models/book_model");
 const DiscountModel = require("../models/discount_model");
 const { sendResponse, discountQuery, countBookDiscount } = require("../utils/common");
 const STATUS_CODE = require("../constants/status_codes");
-const STATUS_REPONSE = require("../constants/status_response");
+const STATUS_RESPONSE = require("../constants/status_response");
 const RESPONSE_MESSAGE = require("../constants/response_message");
 
 class BookController {
@@ -71,7 +71,7 @@ class BookController {
                 res,
                 STATUS_CODE.INTERNAL_SERVER_ERROR,
                 RESPONSE_MESSAGE.FAILED_TO_GET_BOOKS,
-                STATUS_REPONSE.INTERNAL_SERVER_ERROR
+                STATUS_RESPONSE.INTERNAL_SERVER_ERROR
             );
         }
     }
@@ -99,7 +99,7 @@ class BookController {
                     res,
                     STATUS_CODE.INTERNAL_SERVER_ERROR,
                     RESPONSE_MESSAGE.FAILED_TO_GET_SINGLE_BOOK,
-                    STATUS_REPONSE.INTERNAL_SERVER_ERROR
+                    STATUS_RESPONSE.INTERNAL_SERVER_ERROR
                 );
             }
 
@@ -115,16 +115,16 @@ class BookController {
                 res,
                 STATUS_CODE.INTERNAL_SERVER_ERROR,
                 RESPONSE_MESSAGE.FAILED_TO_GET_SINGLE_BOOK,
-                STATUS_REPONSE.INTERNAL_SERVER_ERROR
+                STATUS_RESPONSE.INTERNAL_SERVER_ERROR
             );
         }
     }
 
     async addNewBook(req, res) {
         try {
-            const response = req.body;
+            const requestBody = req.body;
 
-            const book = await BookModel.findOne({ ISBN: response.ISBN });
+            const book = await BookModel.findOne({ ISBN: requestBody.ISBN });
             if (book) {
                 return sendResponse(
                     res,
@@ -134,7 +134,7 @@ class BookController {
                 );
             }
 
-            const author = await AuthorModel.findOne({ _id: response.author });
+            const author = await AuthorModel.findOne({ _id: requestBody.author });
             if (!author) {
                 return sendResponse(
                     res,
@@ -144,13 +144,13 @@ class BookController {
                 );
             }
 
-            const createdBook = await BookModel.create(response);
+            const createdBook = await BookModel.create(requestBody);
             if (!createdBook) {
                 return sendResponse(
                     res,
                     STATUS_CODE.INTERNAL_SERVER_ERROR,
                     RESPONSE_MESSAGE.FAILED_TO_ADD_BOOK,
-                    STATUS_REPONSE.INTERNAL_SERVER_ERROR
+                    STATUS_RESPONSE.INTERNAL_SERVER_ERROR
                 );
             }
 
@@ -166,16 +166,16 @@ class BookController {
                 res,
                 STATUS_CODE.INTERNAL_SERVER_ERROR,
                 RESPONSE_MESSAGE.FAILED_TO_ADD_BOOK,
-                STATUS_REPONSE.INTERNAL_SERVER_ERROR
+                STATUS_RESPONSE.INTERNAL_SERVER_ERROR
             );
         }
     }
 
     async editBook(req, res) {
         try {
-            const response = req.body;
+            const requestBody = req.body;
 
-            const book = await BookModel.findOne({ _id: response.bookId });
+            const book = await BookModel.findOne({ _id: requestBody.bookId });
             if (!book) {
                 return sendResponse(
                     res,
@@ -185,8 +185,8 @@ class BookController {
                 );
             }
 
-            if (response.author) {
-                const author = await AuthorModel.findOne({ _id: response.author });
+            if (requestBody.author) {
+                const author = await AuthorModel.findOne({ _id: requestBody.author });
                 if (!author) {
                     return sendResponse(
                         res,
@@ -198,8 +198,8 @@ class BookController {
             }
 
             const updatedBook = await BookModel.findOneAndUpdate(
-                { _id: response.bookId },
-                { $set: response },
+                { _id: requestBody.bookId },
+                { $set: requestBody },
                 { new: true }
             );
 
@@ -208,7 +208,7 @@ class BookController {
                     res,
                     STATUS_CODE.INTERNAL_SERVER_ERROR,
                     RESPONSE_MESSAGE.FAILED_TO_UPDATE_BOOK,
-                    STATUS_REPONSE.INTERNAL_SERVER_ERROR
+                    STATUS_RESPONSE.INTERNAL_SERVER_ERROR
                 );
             }
 
@@ -224,7 +224,7 @@ class BookController {
                 res,
                 STATUS_CODE.INTERNAL_SERVER_ERROR,
                 RESPONSE_MESSAGE.FAILED_TO_UPDATE_BOOK,
-                STATUS_REPONSE.INTERNAL_SERVER_ERROR
+                STATUS_RESPONSE.INTERNAL_SERVER_ERROR
             );
         }
     }
@@ -256,7 +256,7 @@ class BookController {
                 res,
                 STATUS_CODE.INTERNAL_SERVER_ERROR,
                 RESPONSE_MESSAGE.FAILED_TO_DELETE_BOOK,
-                STATUS_REPONSE.INTERNAL_SERVER_ERROR
+                STATUS_RESPONSE.INTERNAL_SERVER_ERROR
             );
         }
     }

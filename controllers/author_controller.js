@@ -2,7 +2,7 @@ const AdminModel = require("../models/admin_models");
 const AuthorModel = require("../models/author_model");
 const { sendResponse } = require("../utils/common");
 const STATUS_CODE = require("../constants/status_codes");
-const STATUS_REPONSE = require("../constants/status_response");
+const STATUS_RESPONSE = require("../constants/status_response");
 const RESPONSE_MESSAGE = require("../constants/response_message");
 const mongoose = require("mongoose");
 
@@ -30,7 +30,7 @@ class AuthorController {
         res,
         STATUS_CODE.INTERNAL_SERVER_ERROR,
         RESPONSE_MESSAGE.FAILED_TO_GET_AUTHORS,
-        STATUS_REPONSE.INTERNAL_SERVER_ERROR
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR
       );
     }
   }
@@ -75,16 +75,16 @@ class AuthorController {
         res,
         STATUS_CODE.INTERNAL_SERVER_ERROR,
         RESPONSE_MESSAGE.FAILED_TO_GET_SINGLE_AUTHORS,
-        STATUS_REPONSE.INTERNAL_SERVER_ERROR
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR
       );
     }
   }
 
   async addNewAuthor(req, res) {
     try {
-      const response = req.body;
+      const requestBody = req.body;
 
-      const author = await AuthorModel.findOne({ name: response.name });
+      const author = await AuthorModel.findOne({ name: requestBody.name });
       if (author) {
         return sendResponse(
           res,
@@ -94,13 +94,13 @@ class AuthorController {
         );
       }
 
-      const createdAuthor = await AuthorModel.create(response);
+      const createdAuthor = await AuthorModel.create(requestBody);
       if (!createdAuthor) {
         return sendResponse(
           res,
           STATUS_CODE.INTERNAL_SERVER_ERROR,
           RESPONSE_MESSAGE.FAILED_TO_ADD_AUTHOR,
-          STATUS_REPONSE.INTERNAL_SERVER_ERROR
+          STATUS_RESPONSE.INTERNAL_SERVER_ERROR
         );
       }
 
@@ -120,7 +120,7 @@ class AuthorController {
         res,
         STATUS_CODE.INTERNAL_SERVER_ERROR,
         RESPONSE_MESSAGE.FAILED_TO_ADD_AUTHOR,
-        STATUS_REPONSE.INTERNAL_SERVER_ERROR
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR
       );
     }
   }

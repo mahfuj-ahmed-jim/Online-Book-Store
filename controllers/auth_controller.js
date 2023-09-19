@@ -4,7 +4,7 @@ const UserModel = require("../models/user_model");
 const { sendResponse } = require("../utils/common");
 const { generateAdminToken, generateUserToken, decodeToken } = require("../utils/token_handler");
 const STATUS_CODE = require("../constants/status_codes");
-const STATUS_REPONSE = require("../constants/status_response");
+const STATUS_RESPONSE = require("../constants/status_response");
 const RESPONSE_MESSAGE = require("../constants/response_message");
 const bcrypt = require("bcrypt");
 
@@ -39,7 +39,7 @@ class AuthController {
             res,
             STATUS_CODE.INTERNAL_SERVER_ERROR,
             RESPONSE_MESSAGE.FAILED_TO_SIGNUP,
-            STATUS_REPONSE.INTERNAL_SERVER_ERROR
+            STATUS_RESPONSE.INTERNAL_SERVER_ERROR
           );
         }
 
@@ -75,7 +75,7 @@ class AuthController {
             res,
             STATUS_CODE.INTERNAL_SERVER_ERROR,
             RESPONSE_MESSAGE.FAILED_TO_SIGNUP,
-            STATUS_REPONSE.INTERNAL_SERVER_ERROR
+            STATUS_RESPONSE.INTERNAL_SERVER_ERROR
           );
         }
 
@@ -105,7 +105,7 @@ class AuthController {
           res,
           STATUS_CODE.INTERNAL_SERVER_ERROR,
           RESPONSE_MESSAGE.FAILED_TO_SIGNUP,
-          STATUS_REPONSE.INTERNAL_SERVER_ERROR
+          STATUS_RESPONSE.INTERNAL_SERVER_ERROR
         );
       }
 
@@ -124,7 +124,7 @@ class AuthController {
         res,
         STATUS_CODE.INTERNAL_SERVER_ERROR,
         RESPONSE_MESSAGE.FAILED_TO_SIGNUP,
-        STATUS_REPONSE.INTERNAL_SERVER_ERROR
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR
       );
     }
   }
@@ -227,7 +227,7 @@ class AuthController {
         res,
         STATUS_CODE.INTERNAL_SERVER_ERROR,
         RESPONSE_MESSAGE.FAILED_TO_LOGIN,
-        STATUS_REPONSE.INTERNAL_SERVER_ERROR
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR
       );
     }
   }

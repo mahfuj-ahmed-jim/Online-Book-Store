@@ -80,10 +80,10 @@ class UserController {
 
   async editUser(req, res) {
     try {
-      const response = req.body;
+      const requestBody = req.body;
 
       const decodedToken = decodeToken(req);
-      if ((decodedToken.role !== "user" && decodedToken.user.id !== userId) && decodedToken.role !== "admin") {
+      if ((decodedToken.role !== "user" && decodedToken.user.id !== requestBody.userId) && decodedToken.role !== "admin") {
         return sendResponse(
           res,
           STATUS_CODE.UNAUTHORIZED,
@@ -92,7 +92,7 @@ class UserController {
         );
       }
 
-      const user = await UserModel.findOne({ _id: response.userId });
+      const user = await UserModel.findOne({ _id: requestBody.userId });
       if (!user) {
         return sendResponse(
           res,
@@ -104,8 +104,8 @@ class UserController {
 
       if (response.phoneNumber) {
         const isPhoneNumberUnique = await UserModel.findOne({
-          _id: { $ne: response.userId },
-          phoneNumber: response.phoneNumber,
+          _id: { $ne: requestBody.userId },
+          phoneNumber: requestBody.phoneNumber,
         });
 
         if (isPhoneNumberUnique) {
@@ -119,8 +119,8 @@ class UserController {
       }
 
       const updatedUser = await UserModel.findOneAndUpdate(
-        { _id: response.userId },
-        { $set: response },
+        { _id: requestBody.userId },
+        { $set: requestBody },
         { new: true }
       );
 
