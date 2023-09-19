@@ -14,7 +14,7 @@ class AuthorController {
 
       const authors = await AuthorModel.find(
         { disable: false },
-        { createdAt: false, updatedAt: false, __v: false }
+        { disable:false, createdAt: false, updatedAt: false, __v: false }
       ).skip((page - 1) * limit)
         .limit(limit)
         .exec();;
@@ -51,7 +51,7 @@ class AuthorController {
 
       const author = await AuthorModel.findOne(
         { _id: authorId, disable: false },
-        { createdAt: false, updatedAt: false, __v: false }
+        { disable: false, createdAt: false, updatedAt: false, __v: false }
       ).exec();
 
       if (!author) {

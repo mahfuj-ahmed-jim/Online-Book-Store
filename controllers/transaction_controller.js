@@ -120,7 +120,7 @@ class TransactionController {
                     res,
                     STATUS_CODE.NOT_FOUND,
                     RESPONSE_MESSAGE.FAILED_TO_CREATE_TRANSACTION,
-                    RESPONSE_MESSAGE.CART_DONT_EXISTS
+                    RESPONSE_MESSAGE.CART_EMPTY
                 );
             }
 

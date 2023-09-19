@@ -5,7 +5,7 @@ const UserModel = require("../models/user_model");
 const { sendResponse, discountQuery, countBookDiscount } = require("../utils/common");
 const { decodeToken } = require("../utils/token_handler");
 const STATUS_CODE = require("../constants/status_codes");
-const STATUS_REPONSE = require("../constants/status_response");
+const STATUS_RESPONSE = require("../constants/status_response");
 const RESPONSE_MESSAGE = require("../constants/response_message");
 const mongoose = require("mongoose");
 
@@ -23,7 +23,7 @@ class CartController {
                 return sendResponse(
                     res,
                     STATUS_CODE.UNAUTHORIZED,
-                    STATUS_REPONSE.UNAUTHORIZED,
+                    STATUS_RESPONSE.UNAUTHORIZED,
                     RESPONSE_MESSAGE.UNAUTHORIZED
                 );
             }
@@ -75,7 +75,7 @@ class CartController {
                 res,
                 STATUS_CODE.INTERNAL_SERVER_ERROR,
                 RESPONSE_MESSAGE.FAILED_TO_VIEW_FROM_CART,
-                STATUS_REPONSE.INTERNAL_SERVER_ERROR
+                STATUS_RESPONSE.INTERNAL_SERVER_ERROR
             );
         }
     }
@@ -119,7 +119,7 @@ class CartController {
             const currentCart = await CartModel.findOne({ user: userId });
             if (!currentCart) {
                 const cart = {
-                    user: requestBody.userId,
+                    user: userId,
                     orderList: [{ book: requestBody.bookId, quantity: requestBody.quantity }]
                 }
 
@@ -129,7 +129,7 @@ class CartController {
                         res,
                         STATUS_CODE.INTERNAL_SERVER_ERROR,
                         RESPONSE_MESSAGE.FAILED_TO_ADD_ITEM_TO_CART,
-                        STATUS_REPONSE.INTERNAL_SERVER_ERROR
+                        STATUS_RESPONSE.INTERNAL_SERVER_ERROR
                     );
                 }
 
@@ -154,7 +154,7 @@ class CartController {
                     res,
                     STATUS_CODE.INTERNAL_SERVER_ERROR,
                     RESPONSE_MESSAGE.FAILED_TO_ADD_ITEM_TO_CART,
-                    STATUS_REPONSE.INTERNAL_SERVER_ERROR
+                    STATUS_RESPONSE.INTERNAL_SERVER_ERROR
                 );
             }
 
@@ -170,7 +170,7 @@ class CartController {
                 res,
                 STATUS_CODE.INTERNAL_SERVER_ERROR,
                 RESPONSE_MESSAGE.FAILED_TO_ADD_ITEM_TO_CART,
-                STATUS_REPONSE.INTERNAL_SERVER_ERROR
+                STATUS_RESPONSE.INTERNAL_SERVER_ERROR
             );
         }
     }
@@ -223,7 +223,7 @@ class CartController {
                     res,
                     STATUS_CODE.INTERNAL_SERVER_ERROR,
                     RESPONSE_MESSAGE.FAILED_TO_REMOVE_ITEM_TO_CART,
-                    STATUS_REPONSE.INTERNAL_SERVER_ERROR
+                    STATUS_RESPONSE.INTERNAL_SERVER_ERROR
                 );
             }
 
@@ -239,7 +239,7 @@ class CartController {
                 res,
                 STATUS_CODE.INTERNAL_SERVER_ERROR,
                 RESPONSE_MESSAGE.FAILED_TO_REMOVE_ITEM_TO_CART,
-                STATUS_REPONSE.INTERNAL_SERVER_ERROR
+                STATUS_RESPONSE.INTERNAL_SERVER_ERROR
             );
         }
     }

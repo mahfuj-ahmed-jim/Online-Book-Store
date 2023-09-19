@@ -1,4 +1,5 @@
 const RESPONSE_MESSAGE = {
+    INVALID_JSON: "JSON format is not valid",
     INVALID_ROLE: "Invalid Role",
     BLOCK_ACCOUNT: "Account has been blocked for next 5 minutes",
     ACCOUNT_DISABLE: "Account is currently disable", 
@@ -46,6 +47,7 @@ const RESPONSE_MESSAGE = {
     FAILED_TO_ADD_ITEM_TO_CART: "Failed to add book to cart",
     FAILED_TO_REMOVE_ITEM_TO_CART: "Failed to remove book to cart",
     CART_DONT_EXISTS: "Cart don't exists",
+    CART_EMPTY: "Cart is empty",
     BOOK_DONT_EXISTS_IN_CART: "Book don't exists in the cart",
     ADD_ITEM_TO_CART: "Successfully add book to cart",
     REMOVE_ITEM_FROM_CART: "Successfully remove book from cart",
