@@ -1,7 +1,7 @@
 const { sendResponse } = require("../utils/common");
 const { decodeToken } = require("../utils/token_handler");
 const STATUS_CODE = require("../constants/status_codes");
-const STATUS_REPONSE = require("../constants/status_response");
+const STATUS_RESPONSE = require("../constants/status_response");
 const RESPONSE_MESSAGE = require("../constants/response_message");
 
 const validateAdminSignup = (req, res, next) => {
@@ -13,7 +13,7 @@ const validateAdminSignup = (req, res, next) => {
         return sendResponse(
             res,
             STATUS_CODE.UNAUTHORIZED,
-            STATUS_REPONSE.UNAUTHORIZED,
+            STATUS_RESPONSE.UNAUTHORIZED,
             RESPONSE_MESSAGE.UNAUTHORIZED
         );
     }

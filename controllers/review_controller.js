@@ -7,6 +7,7 @@ const { decodeToken } = require("../utils/token_handler");
 const STATUS_CODE = require("../constants/status_codes");
 const STATUS_RESPONSE = require("../constants/status_response");
 const RESPONSE_MESSAGE = require("../constants/response_message");
+const mongoose = require("mongoose");
 
 class ReviewController {
     async addReview(req, res) {
@@ -95,6 +96,16 @@ class ReviewController {
                 );
             }
 
+            const isIdValid = mongoose.Types.ObjectId.isValid(requestBody.reviewId);
+            if (!isIdValid) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.CONFLICT,
+                    RESPONSE_MESSAGE.FAILED_TO_UPDATE_REVIEW,
+                    RESPONSE_MESSAGE.REVIEW_DONT_EXISTS
+                );
+            }
+
             const existingReview = await ReviewModel.findOne({ _id: requestBody.reviewId });
             if (!existingReview) {
                 return sendResponse(
@@ -133,6 +144,16 @@ class ReviewController {
         try {
             const reviewId = req.params.id;
             const decodedToken = decodeToken(req);
+
+            if (!decodedToken.role === "user") {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.UNAUTHORIZED,
+                    STATUS_RESPONSE.UNAUTHORIZED,
+                    RESPONSE_MESSAGE.UNAUTHORIZED
+                );
+            }
+
             const userId = decodedToken.user.id;
 
             const user = await UserModel.findOne({ _id: userId });
@@ -145,13 +166,42 @@ class ReviewController {
                 );
             }
 
-            const existingReview = await ReviewModel.findOneAndDelete({ _id: reviewId });
+            const isIdValid = mongoose.Types.ObjectId.isValid(reviewId);
+            if (!isIdValid) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.CONFLICT,
+                    RESPONSE_MESSAGE.FAILED_TO_DELETE_REVIEW,
+                    RESPONSE_MESSAGE.REVIEW_DONT_EXISTS
+                );
+            }
+
+            const existingReview = await ReviewModel.findOne({ _id: reviewId });
             if (!existingReview) {
                 return sendResponse(
                     res,
                     STATUS_CODE.CONFLICT,
                     RESPONSE_MESSAGE.FAILED_TO_DELETE_REVIEW,
                     RESPONSE_MESSAGE.REVIEW_DONT_EXISTS
+                );
+            }
+
+            if(existingReview.user.toString() !== userId){
+                return sendResponse(
+                    res,
+                    STATUS_CODE.UNAUTHORIZED,
+                    STATUS_RESPONSE.UNAUTHORIZED,
+                    RESPONSE_MESSAGE.UNAUTHORIZED
+                );
+            }
+
+            const deleteReview = await ReviewModel.findOneAndDelete({ _id: reviewId });
+            if (!deleteReview) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.INTERNAL_SERVER_ERROR,
+                    RESPONSE_MESSAGE.FAILED_TO_DELETE_REVIEW,
+                    STATUS_RESPONSE.INTERNAL_SERVER_ERROR
                 );
             }
 
