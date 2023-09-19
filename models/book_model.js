@@ -25,14 +25,13 @@ const bookSchema = new mongoose.Schema(
         },
         totalSell: {
             type: Number,
+            default: 0
         },
         publishedDate: {
             type: Date,
-            required: true,
         },
         updateDate: {
             type: Date,
-            required: true,
         },
         edition: {
             type: Number,
