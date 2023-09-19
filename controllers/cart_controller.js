@@ -116,6 +116,15 @@ class CartController {
                 );
             }
 
+            if(book.stock < requestBody.quantity){
+                return sendResponse(
+                    res,
+                    STATUS_CODE.CONFLICT,
+                    RESPONSE_MESSAGE.FAILED_TO_ADD_ITEM_TO_CART,
+                    RESPONSE_MESSAGE.OUT_OF_STOCK
+                );
+            }
+
             const currentCart = await CartModel.findOne({ user: userId });
             if (!currentCart) {
                 const cart = {

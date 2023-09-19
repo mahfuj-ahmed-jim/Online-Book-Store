@@ -172,7 +172,7 @@ class TransactionController {
                 if (item.stock < cart.orderList[bookIndex].quantity) {
                     return sendResponse(
                         res,
-                        STATUS_CODE.INTERNAL_SERVER_ERROR,
+                        STATUS_CODE.CONFLICT,
                         RESPONSE_MESSAGE.FAILED_TO_CREATE_TRANSACTION,
                         RESPONSE_MESSAGE.OUT_OF_STOCK
                     );
