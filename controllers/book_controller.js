@@ -14,6 +14,7 @@ class BookController {
             const limit = parseInt(req.query.limit) || 10;
             const sortOrder = req.query.sortOrder || "asc";
             const genreFilter = req.query.genreFilter || "";
+            const searchKey = req.query.searchKey || "";
             let bookIds = [];
             let authorIds = [];
             let uniqueAuthors = new Set();
@@ -23,9 +24,9 @@ class BookController {
                 if (sortProperty !== "price" || sortProperty !== "rating" || sortProperty !== "price" || sortProperty !== "stock" ||
                     sortProperty !== "totalSell" || sortOrder !== "asc" || sortOrder !== "desc") {
 
-                    if(sortOrder === "desc"){
+                    if (sortOrder === "desc") {
                         sortStage[sortProperty] = -1;
-                    }else{
+                    } else {
                         sortStage[sortProperty] = 1;
                     }
 
@@ -56,9 +57,12 @@ class BookController {
                 },
                 {
                     $match: { 
-                        $and: [
-                            { genre: { $regex: genreFilter, $options: "i" } }
-                        ]
+                        $or: [
+                            { title: { $regex: searchKey, $options: "i" } },
+                            { country: { $regex: searchKey, $options: "i" } },
+                            { "author.name": { $regex: searchKey, $options: "i" } }
+                        ],
+                        genre: { $regex: genreFilter, $options: "i" } 
                     }
                 },
                 {
@@ -67,6 +71,7 @@ class BookController {
                         title: 1,
                         price: 1,
                         genre: 1,
+                        country: 1,
                         "author._id": 1,
                         "author.name": 1,
                         "author.country": 1
