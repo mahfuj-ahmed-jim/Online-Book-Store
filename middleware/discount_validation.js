@@ -66,4 +66,61 @@ const validateDiscountData = (req, res, next) => {
     next();
 }
 
-module.exports = { validateDiscountData };
+const validateUpdateDiscountData = (req, res, next) => {
+    const { type, discountPercentage, discountAmount, validFrom, validTo, books, authors } = req.body;
+    const errors = {};
+
+    const decodedToken = decodeToken(req);
+    if (decodedToken.role !== "admin" && !decodedToken.admin.superAdmin) {
+        return sendResponse(
+            res,
+            STATUS_CODE.UNAUTHORIZED,
+            STATUS_REPONSE.UNAUTHORIZED,
+            RESPONSE_MESSAGE.UNAUTHORIZED
+        );
+    }
+
+    if (type) {
+        errors.type = "Type can't be edited";
+    }
+
+    if (validFrom && validTo) {
+        const from = new Date(validFrom);
+        const to = new Date(validTo);
+
+        if (isNaN(from) || isNaN(to) || from >= to) {
+            errors.validDate = "Invalid date range";
+        }
+    }
+
+    if ((discountPercentage || discountAmount) &&
+        (typeof discountPercentage !== "number" || discountPercentage <= 0 || discountPercentage > 100) &&
+        (typeof discountAmount !== "number" || discountAmount <= 0)
+    ) {
+        errors.discount = "Either valid discountPercentage or valid discountAmount is required";
+    } else if (typeof discountPercentage === "number" && typeof discountAmount === "number") {
+        errors.discount = "Both discountPercentage and discountAmount cannot be specified at the same time";
+    }
+
+    if (books) {
+        if (!Array.isArray(books) || books.length === 0) {
+            errors.books = "Books must be a non-empty array of book IDs";
+        }
+    } else if (authors) {
+        if (!Array.isArray(authors) || authors.length === 0) {
+            errors.authors = "For type 2, authors must be a non-empty array of author IDs";
+        }
+    }
+
+    if(books && authors){
+        errors.validation = "Both books and authors cannot be specified at the same time";
+    }
+
+    if (Object.keys(errors).length > 0) {
+        return sendResponse(res, STATUS_CODE.BAD_REQUEST, RESPONSE_MESSAGE.FAILED_TO_SIGNUP, errors);
+    }
+
+    next();
+}
+
+module.exports = { validateDiscountData, validateUpdateDiscountData };
