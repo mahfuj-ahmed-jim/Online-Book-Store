@@ -5,6 +5,31 @@ const STATUS_RESPONSE = require("../constants/status_response");
 const RESPONSE_MESSAGE = require("../constants/response_message");
 
 class DiscountController {
+    async getAllDiscount(req, res) {
+        try {
+            const discounts = await DiscountModel.find({}, { createdAt: false, updatedAt: false, __v: false })
+                .populate({ path: "books", model: "books", select: "_id title price stock totalSell" })
+                .populate({ path: "authors", model: "authors", select: "_id name country " })
+                .exec();
+
+            return sendResponse(
+                res,
+                STATUS_CODE.OK,
+                RESPONSE_MESSAGE.GET_DISCOUNTS,
+                discounts
+            );
+
+        } catch (err) {
+            console.error(err);
+            return sendResponse(
+                res,
+                STATUS_CODE.INTERNAL_SERVER_ERROR,
+                RESPONSE_MESSAGE.FAILED_TO_GET_DISCOUNTS,
+                STATUS_RESPONSE.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
     async addDiscount(req, res) {
         try {
             const requestBody = req.body;

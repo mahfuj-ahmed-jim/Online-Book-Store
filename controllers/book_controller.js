@@ -149,7 +149,7 @@ class BookController {
 
     async editBook(req, res) {
         try {
-            const response = req.body;
+            const response = req.body;z
 
             const book = await BookModel.findOne({ _id: response.bookId });
             if (!book) {
