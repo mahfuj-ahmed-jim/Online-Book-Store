@@ -11,10 +11,10 @@ const RESPONSE_MESSAGE = {
     FAILED_TO_LOGIN: "Failed to Login",
     LOGIN_SUCCESSFUL: "Successfully login",
     INVALID_CREDENTIAL: "Invalid Credential",
-    INVALID_AUTHOR: "Failed to add author",
+    INVALID_AUTHOR: "Invalid author",
     FAILED_TO_GET_AUTHORS: "Failed to get authors data",
     FAILED_TO_GET_SINGLE_AUTHORS: "Failed to get author data",
-    FAILED_TO_ADD_AUTHOR: "Invalid author",
+    FAILED_TO_ADD_AUTHOR: "Failed to add author",
     AUTHOR_DONT_EXISTS: "Author don't exists",
     AUTHOR_NAME_EXISTS: "Author already exists",
     AUTHOR_ADDED: "Author added successfully",
@@ -46,6 +46,7 @@ const RESPONSE_MESSAGE = {
     GET_BOOK: "Successfully get book data",
     FAILED_TO_DELETE_BOOK: "Failed to delete book",
     BOOK_DELETED: "Successfully deleted book",
+    FAILED_TO_UPDATE_CART: "Failed to update cart",
     FAILED_TO_ADD_ITEM_TO_CART: "Failed to add book to cart",
     FAILED_TO_REMOVE_ITEM_TO_CART: "Failed to remove book to cart",
     CART_DONT_EXISTS: "Cart don't exists",
@@ -84,6 +85,8 @@ const RESPONSE_MESSAGE = {
     DISABLE_USER: "Successfully update user's disability ",
     FAILED_TO_DISABLE_BOOK: "Failed to update book's disability",
     DISABLE_BOOK: "Successfully update book's disability ",
+    FAILED_TO_DISABLE_AUTHOR: "Failed to update author's disability",
+    DISABLE_AUTHOR: "Successfully update author's disability ",
 };
 
 module.exports = RESPONSE_MESSAGE;

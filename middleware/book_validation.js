@@ -92,7 +92,7 @@ const validateBookData = (req, res, next) => {
 
 
     if (Object.keys(errors).length > 0) {
-        return sendResponse(res, STATUS_CODE.BAD_REQUEST, RESPONSE_MESSAGE.FAILED_TO_SIGNUP, errors);
+        return sendResponse(res, STATUS_CODE.BAD_REQUEST, RESPONSE_MESSAGE.FAILED_TO_ADD_BOOK, errors);
     }
 
     next();
@@ -171,7 +171,7 @@ const validateUpdateBookData = (req, res, next) => {
     }
 
     if (Object.keys(errors).length > 0) {
-        return sendResponse(res, STATUS_CODE.BAD_REQUEST, RESPONSE_MESSAGE.FAILED_TO_SIGNUP, errors);
+        return sendResponse(res, STATUS_CODE.BAD_REQUEST, RESPONSE_MESSAGE.FAILED_TO_UPDATE_BOOK, errors);
     }
 
     next();
@@ -201,7 +201,7 @@ const validateDeleteBookData = (req, res, next) => {
     }
 
     if (Object.keys(errors).length > 0) {
-        return sendResponse(res, STATUS_CODE.BAD_REQUEST, RESPONSE_MESSAGE.FAILED_TO_SIGNUP, errors);
+        return sendResponse(res, STATUS_CODE.BAD_REQUEST, RESPONSE_MESSAGE.FAILED_TO_DELETE_BOOK, errors);
     }
 
     next();
@@ -239,7 +239,7 @@ const validateDisableBook = (req, res, next) => {
     }   
 
     if (Object.keys(errors).length > 0) {
-        return sendResponse(res, STATUS_CODE.BAD_REQUEST, RESPONSE_MESSAGE.FAILED_TO_UPDATE_USER, errors);
+        return sendResponse(res, STATUS_CODE.BAD_REQUEST, RESPONSE_MESSAGE.FAILED_TO_DISABLE_BOOK, errors);
     }
 
     next();

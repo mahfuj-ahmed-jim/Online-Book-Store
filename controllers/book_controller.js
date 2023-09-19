@@ -21,7 +21,7 @@ class BookController {
             let sortStage = {};
 
             if (sortProperty) {
-                if (sortProperty !== "price" || sortProperty !== "rating" || sortProperty !== "price" || sortProperty !== "stock" ||
+                if (sortProperty !== "price" || sortProperty !== "rating" || sortProperty !== "stock" ||
                     sortProperty !== "totalSell" || sortOrder !== "asc" || sortOrder !== "desc") {
 
                     if (sortOrder === "desc") {

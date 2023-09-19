@@ -124,6 +124,41 @@ class AuthorController {
       );
     }
   }
+
+  async disableAuthor(req, res) {
+    try {
+      const requestBody = req.body;
+
+      const author = await AuthorModel.findOne({ _id: requestBody.authorId, disable: !requestBody.disable }, { createdAt: false, updatedAt: false, __v: false });
+      if (!author) {
+        return sendResponse(
+          res,
+          STATUS_CODE.NOT_FOUND,
+          RESPONSE_MESSAGE.FAILED_TO_DISABLE_AUTHOR,
+          RESPONSE_MESSAGE.AUTHOR_DONT_EXISTS
+        );
+      }
+
+      author.disable = requestBody.disable;
+      await author.save();
+
+      return sendResponse(
+        res,
+        STATUS_CODE.OK,
+        RESPONSE_MESSAGE.DISABLE_USER,
+        author
+      );
+
+    } catch (err) {
+      console.log(err);
+      return sendResponse(
+        res,
+        STATUS_CODE.INTERNAL_SERVER_ERROR,
+        RESPONSE_MESSAGE.FAILED_TO_DISABLE_AUTHOR,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
 }
 
 module.exports = new AuthorController();

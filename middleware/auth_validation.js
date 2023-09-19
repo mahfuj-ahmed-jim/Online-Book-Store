@@ -121,7 +121,7 @@ const validateLogin = (req, res, next) => {
     }
 
     if (Object.keys(errors).length > 0) {
-        return sendResponse(res, STATUS_CODE.BAD_REQUEST, RESPONSE_MESSAGE.FAILED_TO_SIGNUP, errors);
+        return sendResponse(res, STATUS_CODE.BAD_REQUEST, RESPONSE_MESSAGE.FAILED_TO_LOGIN, errors);
     }
 
     next();
