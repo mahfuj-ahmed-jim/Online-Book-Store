@@ -26,6 +26,8 @@ const RESPONSE_MESSAGE = {
     GET_USER: "Successfully get all user data",
     FAILED_TO_DELETE_USER: "Failed to delete user",
     FAILED_TO_UPDATE_USER_BALANCE: "Failed to update user balance",
+    FAILED_TO_DISABLE_USER: "Failed to update user's disability",
+    DISABLE_USER: "Successfully update user's disability ",
     USER_BALANCE_UPDATED: "Successfully updated user balance",
     DELETE_USER: "Successfully deleted user",
     USER_UPDATED: "Successfully updated user",

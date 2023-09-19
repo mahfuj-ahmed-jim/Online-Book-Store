@@ -59,7 +59,6 @@ class BookController {
                     $match: { 
                         $or: [
                             { title: { $regex: searchKey, $options: "i" } },
-                            { country: { $regex: searchKey, $options: "i" } },
                             { "author.name": { $regex: searchKey, $options: "i" } }
                         ],
                         genre: { $regex: genreFilter, $options: "i" } 
@@ -130,6 +129,16 @@ class BookController {
                 { _id: bookId, disable: false },
                 { createdAt: false, updatedAt: false, __v: false, disable: false }
             ).populate('author', '_id name about country').exec();
+
+            const author = await AuthorModel.findOne({_id: book.author._id, disable: false});
+            if(!author){
+                return sendResponse(
+                    res,
+                    STATUS_CODE.NOT_FOUND,
+                    RESPONSE_MESSAGE.FAILED_TO_GET_SINGLE_BOOK,
+                    RESPONSE_MESSAGE.BOOK_DONT_EXISTS
+                );
+            }
 
             bookIds.push(book._id);
             authorIds.push(book.author._id);

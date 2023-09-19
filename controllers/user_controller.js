@@ -238,6 +238,41 @@ class UserController {
       );
     }
   }
+
+  async disableUser(req, res) {
+    try {
+      const requestBody = req.body;
+
+      const user = await UserModel.findOne({ _id: requestBody.userId, disable: !requestBody.disable }, { createdAt: false, updatedAt: false, __v: false });
+      if (!user) {
+        return sendResponse(
+          res,
+          STATUS_CODE.NOT_FOUND,
+          RESPONSE_MESSAGE.FAILED_TO_DISABLE_USER,
+          RESPONSE_MESSAGE.USER_NOT_FOUND
+        );
+      }
+
+      user.disable = requestBody.disable;
+      await user.save();
+
+      return sendResponse(
+        res,
+        STATUS_CODE.OK,
+        RESPONSE_MESSAGE.DISABLE_USER,
+        user
+      );
+
+    } catch (err) {
+      console.log(err);
+      return sendResponse(
+        res,
+        STATUS_CODE.INTERNAL_SERVER_ERROR,
+        RESPONSE_MESSAGE.FAILED_TO_DISABLE_USER,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
 }
 
 module.exports = new UserController();

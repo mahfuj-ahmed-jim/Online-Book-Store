@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.post("/add", validateToken, validateReviewData, ReviewController.addReview);
 router.put("/update", validateToken, validateUpdateReviewData, ReviewController.editReview);
-router.delete("/delete/:id", validateToken, ReviewController.deleteReview);
+router.delete("/delete/", validateToken, ReviewController.deleteReview);
 
 module.exports = router;

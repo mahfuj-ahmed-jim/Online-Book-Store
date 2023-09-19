@@ -173,7 +173,7 @@ class ReviewController {
 
     async deleteReview(req, res) {
         try {
-            const reviewId = req.params.id;
+            const { reviewId } = req.body;
             const decodedToken = decodeToken(req);
             let totalReview = 0;
             let totalRating = 0;
