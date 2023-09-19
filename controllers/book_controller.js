@@ -231,7 +231,7 @@ class BookController {
 
     async deleteBook(req, res) {
         try {
-            const bookId = req.params.id;
+            const { bookId } = req.body;
 
             const book = await BookModel.findOne({ _id: bookId });
             if (!book) {
@@ -247,7 +247,7 @@ class BookController {
 
             return sendResponse(
                 res,
-                STATUS_CODE.NO_CONTENT,
+                STATUS_CODE.OK,
                 RESPONSE_MESSAGE.BOOK_DELETED,
             );
         } catch (err) {

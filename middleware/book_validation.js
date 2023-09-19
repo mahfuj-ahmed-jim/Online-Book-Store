@@ -183,4 +183,34 @@ const validateUpdateBookData = (req, res, next) => {
     next();
 }
 
-module.exports = { validateBookData, validateUpdateBookData };
+const validateDeleteBookData = (req, res, next) => {
+    const { bookId } = req.body;
+    const errors = {};
+
+    const decodedToken = decodeToken(req);
+    if (decodedToken.role !== "admin") {
+        return sendResponse(
+            res,
+            STATUS_CODE.UNAUTHORIZED,
+            STATUS_REPONSE.UNAUTHORIZED,
+            RESPONSE_MESSAGE.UNAUTHORIZED
+        );
+    }
+
+    if (!bookId || bookId === "") {
+        errors.bookId = "Book Id must be a string";
+    } else {
+        const isIdValid = mongoose.Types.ObjectId.isValid(bookId);
+        if (!isIdValid) {
+            errors.bookId = "Book id is not valid"
+        }
+    }
+
+    if (Object.keys(errors).length > 0) {
+        return sendResponse(res, STATUS_CODE.BAD_REQUEST, RESPONSE_MESSAGE.FAILED_TO_SIGNUP, errors);
+    }
+
+    next();
+}
+
+module.exports = { validateBookData, validateUpdateBookData, validateDeleteBookData };
