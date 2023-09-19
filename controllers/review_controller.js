@@ -15,6 +15,8 @@ class ReviewController {
             const requestBody = req.body;
             const decodedToken = decodeToken(req);
             const userId = decodedToken.user.id;
+            let totalReview = 0;
+            let totalRating = 0;
 
             const user = await UserModel.findOne({ _id: userId });
             if (!user) {
@@ -26,7 +28,7 @@ class ReviewController {
                 );
             }
 
-            const book = await BookModel.findOne({ _id: requestBody.book });
+            const book = await BookModel.findOne({ _id: requestBody.book, disable: false });
             if (!book) {
                 return sendResponse(
                     res,
@@ -63,6 +65,15 @@ class ReviewController {
                 );
             }
 
+            const reviews = await ReviewModel.find({ book: requestBody.book }).exec();
+            reviews.map(review => {
+                totalReview++;
+                totalRating += review.rating;
+            });
+
+            book.rating = totalRating / totalReview;
+            await book.save();
+
             return sendResponse(
                 res,
                 STATUS_CODE.CREATED,
@@ -85,6 +96,8 @@ class ReviewController {
             const requestBody = req.body;
             const decodedToken = decodeToken(req);
             const userId = decodedToken.user.id;
+            let totalReview = 0;
+            let totalRating = 0;
 
             const user = await UserModel.findOne({ _id: userId });
             if (!user) {
@@ -106,7 +119,7 @@ class ReviewController {
                 );
             }
 
-            const existingReview = await ReviewModel.findOne({ _id: requestBody.reviewId });
+            const existingReview = await ReviewModel.findOne({ _id: requestBody.reviewId }).exec();
             if (!existingReview) {
                 return sendResponse(
                     res,
@@ -116,11 +129,29 @@ class ReviewController {
                 );
             }
 
+            const book = await BookModel.findOne({ _id: existingReview.book, disable: false });
+            if (!book) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.NOT_FOUND,
+                    RESPONSE_MESSAGE.FAILED_TO_UPDATE_REVIEW,
+                    RESPONSE_MESSAGE.BOOK_DONT_EXISTS
+                );
+            }
+
             existingReview.comment = requestBody.comment;
             existingReview.rating = requestBody.rating;
             existingReview.time = new Date();
-
             await existingReview.save();
+
+            const reviews = await ReviewModel.find({ book: existingReview.book });
+            reviews.map(review => {
+                totalReview++;
+                totalRating += review.rating;
+            });
+
+            book.rating = totalRating / totalReview;
+            await book.save();
 
             return sendResponse(
                 res,
@@ -144,6 +175,8 @@ class ReviewController {
         try {
             const reviewId = req.params.id;
             const decodedToken = decodeToken(req);
+            let totalReview = 0;
+            let totalRating = 0;
 
             if (!decodedToken.role === "user") {
                 return sendResponse(
@@ -186,12 +219,22 @@ class ReviewController {
                 );
             }
 
-            if(existingReview.user.toString() !== userId){
+            if (existingReview.user.toString() !== userId) {
                 return sendResponse(
                     res,
                     STATUS_CODE.UNAUTHORIZED,
                     STATUS_RESPONSE.UNAUTHORIZED,
                     RESPONSE_MESSAGE.UNAUTHORIZED
+                );
+            }
+
+            const book = await BookModel.findOne({ _id: existingReview.book, disable: false });
+            if (!book) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.NOT_FOUND,
+                    RESPONSE_MESSAGE.FAILED_TO_UPDATE_REVIEW,
+                    RESPONSE_MESSAGE.BOOK_DONT_EXISTS
                 );
             }
 
@@ -203,6 +246,20 @@ class ReviewController {
                     RESPONSE_MESSAGE.FAILED_TO_DELETE_REVIEW,
                     STATUS_RESPONSE.INTERNAL_SERVER_ERROR
                 );
+            }
+
+            const reviews = await ReviewModel.find({ book: existingReview.book });
+            if (!reviews || reviews.length === 0) {
+                book.rating = undefined;
+                await book.save();
+            } else {
+                reviews.map(review => {
+                    totalReview++;
+                    totalRating += review.rating;
+                });
+
+                book.rating = totalRating / totalReview;
+                await book.save();
             }
 
             return sendResponse(
