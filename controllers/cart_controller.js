@@ -106,7 +106,7 @@ class CartController {
                 );
             }
 
-            const book = await BookModel.findOne({ _id: requestBody.bookId });
+            const book = await BookModel.findOne({ _id: requestBody.bookId, disable: false });
             if (!book) {
                 return sendResponse(
                     res,

@@ -94,6 +94,7 @@ class TransactionController {
             let uniqueAuthors = new Set();
             let totalPrice = 0;
             let transaction = { user: userId, orderList: [] };
+            let disableBookList = [];
 
             const user = await UserModel.findOne({ _id: userId });
             if (!user) {
@@ -105,13 +106,22 @@ class TransactionController {
                 );
             }
 
+            if (!user.phoneNumber || !user.address || !user.address.district || !user.address.area || !user.address.houseNumber) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.NOT_FOUND,
+                    RESPONSE_MESSAGE.FAILED_TO_CREATE_TRANSACTION,
+                    RESPONSE_MESSAGE.PHONE_NUMBER_AND_ADDRESS_NEED_FOR_TRANSACTION
+                );
+            }
+
             const cart = await CartModel.findOne({ user: userId })
                 .populate({
                     path: "orderList.book",
-                    select: "_id title price author",
+                    select: "_id title price author disable",
                     populate: {
                         path: "author",
-                        select: "_id name",
+                        select: "_id name disable",
                     },
                 })
                 .exec();
@@ -128,8 +138,27 @@ class TransactionController {
                 books.push(cart.book);
                 bookIds.push(cart.book._id);
                 uniqueAuthors.add(cart.book.author._id);
+
+                if (cart.book.author.disable || cart.book.disable) {
+                    disableBookList.push(cart.book._id);
+                }
+
+                delete cart.book.author.disable;
+                delete cart.book.disable;
             });
             authorIds = Array.from(uniqueAuthors);
+
+            if (disableBookList.length != 0) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.UNPROCESSABLE_ENTITY,
+                    RESPONSE_MESSAGE.FAILED_TO_CREATE_TRANSACTION,
+                    {
+                        errorMessage: RESPONSE_MESSAGE.UNAVAILABLE_BOOKS,
+                        books: disableBookList
+                    }
+                );
+            }
 
             const booksInCart = await BookModel.find({
                 _id: {

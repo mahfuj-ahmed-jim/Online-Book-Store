@@ -102,7 +102,7 @@ class UserController {
         );
       }
 
-      if (response.phoneNumber) {
+      if (requestBody.phoneNumber) {
         const isPhoneNumberUnique = await UserModel.findOne({
           _id: { $ne: requestBody.userId },
           phoneNumber: requestBody.phoneNumber,
