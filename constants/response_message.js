@@ -70,6 +70,8 @@ const RESPONSE_MESSAGE = {
     UPDATE_REVIEW: "Successfully updated review",
     FAILED_TO_DELETE_REVIEW: "Failed to delete review",
     DELETE_REVIEW: "Successfully deleted review",
+    UNAUTHORIZED: "Authentication required",
+    TOKEN_EXPIRE: "Login Again",
 };
 
 module.exports = RESPONSE_MESSAGE;

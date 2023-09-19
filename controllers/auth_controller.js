@@ -2,10 +2,7 @@ const AuthModel = require("../models/auth_model");
 const AdminModel = require("../models/admin_models");
 const UserModel = require("../models/user_model");
 const { sendResponse } = require("../utils/common");
-const {
-  generateAdminToken,
-  generateUserToken,
-} = require("../utils/token_handler");
+const { generateAdminToken, generateUserToken, decodeToken } = require("../utils/token_handler");
 const STATUS_CODE = require("../constants/status_codes");
 const STATUS_REPONSE = require("../constants/status_response");
 const RESPONSE_MESSAGE = require("../constants/response_message");
@@ -14,10 +11,23 @@ const bcrypt = require("bcrypt");
 class AuthController {
   async signup(req, res) {
     try {
-      const response = req.body;
+      const requestBody = req.body;
       let token, responseData;
 
-      const isEmailExists = await AuthModel.findOne({ email: response.email });
+      if (requestBody.role == 1) {
+        const decodedToken = decodeToken(req);
+
+        if (!decodedToken.admin || !decodedToken.admin.superAdmin) {
+          return sendResponse(
+            res,
+            STATUS_CODE.UNAUTHORIZED,
+            STATUS_REPONSE.UNAUTHORIZED,
+            RESPONSE_MESSAGE.UNAUTHORIZED
+          );
+        }
+      }
+
+      const isEmailExists = await AuthModel.findOne({ email: requestBody.email });
       if (isEmailExists) {
         return sendResponse(
           res,
@@ -27,13 +37,13 @@ class AuthController {
         );
       }
 
-      if (response.role === 1) {
+      if (requestBody.role === 1) {
         const admin = {
-          name: response.name,
-          role: response.role,
-          email: response.email,
-          secretId: response.secretId,
-          superAdmin: response.superAdmin,
+          name: requestBody.name,
+          role: requestBody.role,
+          email: requestBody.email,
+          secretId: requestBody.secretId,
+          superAdmin: requestBody.superAdmin,
         };
 
         const createdAdmin = await AdminModel.create(admin);
@@ -49,17 +59,17 @@ class AuthController {
         token = generateAdminToken(createdAdmin);
         responseData = {
           _id: createdAdmin._id,
-          email: response.email,
-          name: response.name,
-          secretId: response.secretId,
-          superAdmin: response.superAdmin,
+          email: requestBody.email,
+          name: requestBody.name,
+          secretId: requestBody.secretId,
+          superAdmin: requestBody.superAdmin,
         };
-      } else if (response.role === 2) {
+      } else if (requestBody.role === 2) {
         const user = {
-          name: response.name,
-          role: response.role,
-          email: response.email,
-          phoneNumber: response.phoneNumber,
+          name: requestBody.name,
+          role: requestBody.role,
+          email: requestBody.email,
+          phoneNumber: requestBody.phoneNumber,
         };
 
         const createdUser = await UserModel.create(user);
@@ -75,20 +85,20 @@ class AuthController {
         token = generateUserToken(createdUser);
         responseData = {
           _id: createdUser._id,
-          email: response.email,
-          name: response.name,
-          phoneNumber: response.phoneNumber,
+          email: requestBody.email,
+          name: requestBody.name,
+          phoneNumber: requestBody.phoneNumber,
         };
       }
 
-      const hashedPassword = await bcrypt.hash(response.password, 10);
+      const hashedPassword = await bcrypt.hash(requestBody.password, 10);
       const auth = {
-        email: response.email,
+        email: requestBody.email,
         password: hashedPassword,
         verified: true,
-        role: response.role,
-        admin: response.role === 1 ? responseData._id : null,
-        user: response.role === 2 ? responseData._id : null,
+        role: requestBody.role,
+        admin: requestBody.role === 1 ? responseData._id : null,
+        user: requestBody.role === 2 ? responseData._id : null,
         lastLoginDate: new Date(),
       };
 
