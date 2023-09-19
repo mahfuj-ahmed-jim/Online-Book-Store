@@ -12,8 +12,18 @@ const BookModel = require("../models/book_model");
 class TransactionController {
     async getAllTransactions(req, res) {
         try {
+            const decodedToken = decodeToken(req);
+            if (decodedToken.role !== "admin") {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.UNAUTHORIZED,
+                    STATUS_RESPONSE.UNAUTHORIZED,
+                    RESPONSE_MESSAGE.UNAUTHORIZED
+                );
+            }
+
             const transactions = await TransactionModel.find();
-            
+
             return sendResponse(
                 res,
                 STATUS_CODE.OK,
@@ -35,8 +45,18 @@ class TransactionController {
         try {
             const userId = req.params.id;
 
-            const transactions = await TransactionModel.find({user: userId});
-            
+            const decodedToken = decodeToken(req);
+            if ((decodedToken.role === "user" && decodedToken.user.id !== userId) && decodedToken.role !== "admin") {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.UNAUTHORIZED,
+                    STATUS_RESPONSE.UNAUTHORIZED,
+                    RESPONSE_MESSAGE.UNAUTHORIZED
+                );
+            }
+
+            const transactions = await TransactionModel.find({ user: userId });
+
             return sendResponse(
                 res,
                 STATUS_CODE.OK,
@@ -57,6 +77,15 @@ class TransactionController {
     async createTransaction(req, res) {
         try {
             const decodedToken = decodeToken(req);
+            if (decodedToken.role === "admin") {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.UNAUTHORIZED,
+                    STATUS_RESPONSE.UNAUTHORIZED,
+                    RESPONSE_MESSAGE.UNAUTHORIZED
+                );
+            }
+
             const userId = decodedToken.user.id;
             let bulk = [];
             let books = [];

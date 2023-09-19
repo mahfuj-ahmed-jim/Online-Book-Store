@@ -1,13 +1,25 @@
 const AuthModel = require("../models/auth_model");
 const UserModel = require("../models/user_model");
 const { sendResponse } = require("../utils/common");
+const { decodeToken } = require("../utils/token_handler");
 const STATUS_CODE = require("../constants/status_codes");
-const STATUS_REPONSE = require("../constants/status_response");
+const STATUS_RESPONSE = require("../constants/status_response");
 const RESPONSE_MESSAGE = require("../constants/response_message");
+const mongoose = require("mongoose");
 
 class UserController {
   async getAllUsers(req, res) {
     try {
+      const decodedToken = decodeToken(req);
+      if (decodedToken.role !== "admin") {
+        return sendResponse(
+          res,
+          STATUS_CODE.UNAUTHORIZED,
+          STATUS_RESPONSE.UNAUTHORIZED,
+          RESPONSE_MESSAGE.UNAUTHORIZED
+        );
+      }
+
       const users = await UserModel.find(
         {},
         { createdAt: false, updatedAt: false, __v: false }
@@ -25,7 +37,7 @@ class UserController {
         res,
         STATUS_CODE.INTERNAL_SERVER_ERROR,
         RESPONSE_MESSAGE.FAILED_TO_GET_USERS,
-        STATUS_REPONSE.INTERNAL_SERVER_ERROR
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR
       );
     }
   }
@@ -33,6 +45,16 @@ class UserController {
   async getUserById(req, res) {
     try {
       const userId = req.params.id;
+
+      const decodedToken = decodeToken(req);
+      if ((decodedToken.role === "user" && decodedToken.user.id !== userId) && decodedToken.role !== "admin") {
+        return sendResponse(
+          res,
+          STATUS_CODE.UNAUTHORIZED,
+          STATUS_RESPONSE.UNAUTHORIZED,
+          RESPONSE_MESSAGE.UNAUTHORIZED
+        );
+      }
 
       const user = await UserModel.findOne(
         { _id: userId },
@@ -46,11 +68,12 @@ class UserController {
         user
       );
     } catch (err) {
+      console.log(err);
       return sendResponse(
         res,
         STATUS_CODE.INTERNAL_SERVER_ERROR,
         RESPONSE_MESSAGE.FAILED_TO_GET_SINGLE_USER,
-        STATUS_REPONSE.INTERNAL_SERVER_ERROR
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR
       );
     }
   }
@@ -58,6 +81,16 @@ class UserController {
   async editUser(req, res) {
     try {
       const response = req.body;
+
+      const decodedToken = decodeToken(req);
+      if ((decodedToken.role !== "user" && decodedToken.user.id !== userId) && decodedToken.role !== "admin") {
+        return sendResponse(
+          res,
+          STATUS_CODE.UNAUTHORIZED,
+          STATUS_RESPONSE.UNAUTHORIZED,
+          RESPONSE_MESSAGE.UNAUTHORIZED
+        );
+      }
 
       const user = await UserModel.findOne({ _id: response.userId });
       if (!user) {
@@ -103,16 +136,36 @@ class UserController {
         res,
         STATUS_CODE.INTERNAL_SERVER_ERROR,
         RESPONSE_MESSAGE.FAILED_TO_UPDATE_USER,
-        STATUS_REPONSE.INTERNAL_SERVER_ERROR
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR
       );
     }
   }
 
   async deleteUser(req, res) {
     try {
-      const userId = req.params.id;
+      const requestBody = req.body;
 
-      const user = await UserModel.findOne({ _id: userId });
+      const decodedToken = decodeToken(req);
+      if (decodedToken.role !== "admin" || !decodedToken.admin.superAdmin) {
+        return sendResponse(
+          res,
+          STATUS_CODE.UNAUTHORIZED,
+          STATUS_RESPONSE.UNAUTHORIZED,
+          RESPONSE_MESSAGE.UNAUTHORIZED
+        );
+      }
+
+      const isIdValid = mongoose.Types.ObjectId.isValid(requestBody.userId);
+      if (!isIdValid) {
+        return sendResponse(
+          res,
+          STATUS_CODE.NOT_FOUND,
+          RESPONSE_MESSAGE.FAILED_TO_DELETE_USER,
+          RESPONSE_MESSAGE.USER_NOT_FOUND
+        );
+      }
+
+      const user = await UserModel.findOne({ _id: requestBody.userId });
       if (!user) {
         return sendResponse(
           res,
@@ -122,12 +175,12 @@ class UserController {
         );
       }
 
-      await UserModel.deleteOne({ _id: userId });
-      await AuthModel.deleteOne({ user: userId });
+      await UserModel.deleteOne({ _id: requestBody.userId });
+      await AuthModel.deleteOne({ user: requestBody.userId });
 
       return sendResponse(
         res,
-        STATUS_CODE.NO_CONTENT,
+        STATUS_CODE.OK,
         RESPONSE_MESSAGE.DELETE_USER
       );
     } catch (err) {
@@ -136,7 +189,7 @@ class UserController {
         res,
         STATUS_CODE.INTERNAL_SERVER_ERROR,
         RESPONSE_MESSAGE.FAILED_TO_DELETE_USER,
-        STATUS_REPONSE.INTERNAL_SERVER_ERROR
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR
       );
     }
   }
@@ -144,6 +197,16 @@ class UserController {
   async updateUserBalance(req, res) {
     try {
       const requestBody = req.body;
+
+      const decodedToken = decodeToken(req);
+      if (decodedToken.role === "user" && decodedToken.user.id !== requestBody.userId) {
+        return sendResponse(
+          res,
+          STATUS_CODE.UNAUTHORIZED,
+          STATUS_RESPONSE.UNAUTHORIZED,
+          RESPONSE_MESSAGE.UNAUTHORIZED
+        );
+      }
 
       const user = await UserModel.findOne({ _id: requestBody.userId }, { createdAt: false, updatedAt: false, __v: false });
       if (!user) {
@@ -171,7 +234,7 @@ class UserController {
         res,
         STATUS_CODE.INTERNAL_SERVER_ERROR,
         RESPONSE_MESSAGE.FAILED_TO_UPDATE_USER_BALANCE,
-        STATUS_REPONSE.INTERNAL_SERVER_ERROR
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR
       );
     }
   }
