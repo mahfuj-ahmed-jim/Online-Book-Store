@@ -97,7 +97,27 @@ const validateUserSignup = (req, res, next) => {
     next();
 }
 
+const validateLogin = (req, res, next) => {
+    const { email, password } = req.body;
+    const errors = {};
+
+    if (!email || email === "") {
+        errors.email = "Email is required";
+    } 
+
+    if (!password || password === "") {
+        errors.password = "Password is required";
+    } 
+
+    if (Object.keys(errors).length > 0) {
+        return sendResponse(res, STATUS_CODE.BAD_REQUEST, RESPONSE_MESSAGE.FAILED_TO_SIGNUP, errors);
+    }
+
+    next();
+}
+
 module.exports = {
     validateAdminSignup,
-    validateUserSignup
+    validateUserSignup,
+    validateLogin
 };
