@@ -253,8 +253,21 @@ class UserController {
         );
       }
 
+      const auth = await AuthModel.findOne({email: user.email});
+      if (!auth) {
+        return sendResponse(
+          res,
+          STATUS_CODE.NOT_FOUND,
+          RESPONSE_MESSAGE.FAILED_TO_DISABLE_USER,
+          RESPONSE_MESSAGE.USER_NOT_FOUND
+        );
+      }
+
       user.disable = requestBody.disable;
       await user.save();
+
+      auth.disable = requestBody.disable;
+      await auth.save();
 
       return sendResponse(
         res,

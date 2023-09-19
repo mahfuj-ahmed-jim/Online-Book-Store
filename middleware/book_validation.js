@@ -207,4 +207,42 @@ const validateDeleteBookData = (req, res, next) => {
     next();
 }
 
-module.exports = { validateBookData, validateUpdateBookData, validateDeleteBookData };
+const validateDisableBook = (req, res, next) => {
+    const { bookId, disable } = req.body;
+    const errors = {};
+
+    const decodedToken = decodeToken(req);
+    if (decodedToken.role !== "admin" || !decodedToken.admin.superAdmin) {
+        return sendResponse(
+            res,
+            STATUS_CODE.UNAUTHORIZED,
+            STATUS_RESPONSE.UNAUTHORIZED,
+            RESPONSE_MESSAGE.UNAUTHORIZED
+        );
+    }
+
+    if (!bookId) {
+        errors.bookId = "Book ID is required";
+    } else if (typeof bookId !== "string") {
+        errors.bookId = "Book ID must be a string";
+    } else {
+        const isIdValid = mongoose.Types.ObjectId.isValid(bookId);
+        if (!isIdValid) {
+            errors.bookId = "Book Id is not valid"
+        }
+    }
+
+    if(!('disable' in req.body)){
+        errors.disable = "Disable is required";
+    }else if (typeof disable !== "boolean") {
+        errors.disable = "Disable must be a boolean value";
+    }   
+
+    if (Object.keys(errors).length > 0) {
+        return sendResponse(res, STATUS_CODE.BAD_REQUEST, RESPONSE_MESSAGE.FAILED_TO_UPDATE_USER, errors);
+    }
+
+    next();
+}
+
+module.exports = { validateBookData, validateUpdateBookData, validateDeleteBookData, validateDisableBook };

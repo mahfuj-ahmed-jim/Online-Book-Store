@@ -83,7 +83,7 @@ const validateDisableUser = (req, res, next) => {
     }   
 
     if (Object.keys(errors).length > 0) {
-        return sendResponse(res, STATUS_CODE.BAD_REQUEST, RESPONSE_MESSAGE.FAILED_TO_UPDATE_USER, errors);
+        return sendResponse(res, STATUS_CODE.BAD_REQUEST, RESPONSE_MESSAGE.FAILED_TO_DISABLE_USER, errors);
     }
 
     next();
