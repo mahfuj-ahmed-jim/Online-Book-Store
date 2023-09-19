@@ -1,4 +1,5 @@
 const RESPONSE_MESSAGE = {
+    INVALID_ROLE: "Invalid Role",
     BLOCK_ACCOUNT: "Account has been blocked for next 5 minutes",
     ACCOUNT_NOT_VERIFIED: "Account is not verified", 
     EMAIL_ALREADY_EXISTS: "Email already exists",

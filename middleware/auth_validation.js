@@ -9,7 +9,7 @@ const validateAdminSignup = (req, res, next) => {
 
     if (!email || email === "") {
         errors.email = "Email is required";
-    } else if (!email.includes("@")) {
+    } else if (!email.includes("@") && !email.includes(".")) {
         errors.email = "Invalid Email";
     }
 
@@ -43,6 +43,61 @@ const validateAdminSignup = (req, res, next) => {
     next();
 }
 
+const validateUserSignup = (req, res, next) => {
+    const { email, password, name, phoneNumber, address } = req.body;
+    const errors = {};
+
+    if (role !== 2) {
+        return sendResponse(res, STATUS_CODE.BAD_REQUEST, RESPONSE_MESSAGE.FAILED_TO_SIGNUP, RESPONSE_MESSAGE.INVALID_ROLE);
+    }
+
+    if (!email || email === "") {
+        errors.email = "Email is required";
+    } else if (!email.includes("@") && !email.includes(".")) {
+        errors.email = "Invalid Email";
+    }
+
+    if (!password || password === "") {
+        errors.password = "Password is required";
+    } else if (
+        !/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$/.test(
+            password
+        )
+    ) {
+        errors.password =
+            "Password must be at least 8 characters long and include at least one capital letter, one small letter, one special character, and one number.";
+    }
+
+    if (!name || typeof name !== "string") {
+        errors.name = !name ? "Name is required" : "Name must be a string";
+    }
+
+    if (!phoneNumber || !/^\d{11}$/.test(phoneNumber)) {
+        errors.phoneNumber = "Phone number must be 11 digits long";
+    }
+
+    if (address) {
+        const { district, area, houseNumber } = address;
+
+        if (!district || district === "") {
+            errors.address = "District is required";
+        }
+        if (!area || area === "") {
+            errors.address = "Area is required";
+        }
+        if (!houseNumber || houseNumber === "") {
+            errors.address = "House number is required";
+        }
+    }
+
+    if (Object.keys(errors).length > 0) {
+        return sendResponse(res, STATUS_CODE.BAD_REQUEST, RESPONSE_MESSAGE.FAILED_TO_SIGNUP, errors);
+    }
+
+    next();
+}
+
 module.exports = {
     validateAdminSignup,
+    validateUserSignup
 };
