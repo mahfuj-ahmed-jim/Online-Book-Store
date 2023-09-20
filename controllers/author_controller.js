@@ -14,7 +14,7 @@ class AuthorController {
 
       const authors = await AuthorModel.find(
         { disable: false },
-        { disable:false, createdAt: false, updatedAt: false, __v: false }
+        { disable: false, createdAt: false, updatedAt: false, __v: false }
       ).skip((page - 1) * limit)
         .limit(limit)
         .exec();;
@@ -23,7 +23,12 @@ class AuthorController {
         res,
         STATUS_CODE.OK,
         RESPONSE_MESSAGE.GET_ALL_AUTHORS,
-        authors
+        {
+          page: page,
+          authorPerPage: limit,
+          totalAuthors: authors.length,
+          authors: authors
+        }
       );
     } catch (err) {
       return sendResponse(

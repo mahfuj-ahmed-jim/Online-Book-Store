@@ -228,7 +228,7 @@ class BookController {
         try {
             const requestBody = req.body;
 
-            const book = await BookModel.findOne({ _id: requestBody.bookId });
+            const book = await BookModel.findOne({ _id: requestBody.bookId, disable: false });
             if (!book) {
                 return sendResponse(
                     res,

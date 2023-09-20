@@ -179,6 +179,49 @@ class DiscountController {
             );
         }
     }
+
+    async deleteDiscount(req, res) {
+        try {
+            const { discountId } = req.body;
+
+            const decodedToken = decodeToken(req);
+            if (decodedToken.role !== "admin" && !decodedToken.admin.superAdmin) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.UNAUTHORIZED,
+                    STATUS_REPONSE.UNAUTHORIZED,
+                    RESPONSE_MESSAGE.UNAUTHORIZED
+                );
+            }
+
+            const deletedDiscount = await DiscountModel.findOneAndDelete({ _id: discountId });
+
+            if (!deletedDiscount) {
+                return sendResponse(
+                    res,
+                    STATUS_CODE.NOT_FOUND,
+                    RESPONSE_MESSAGE.FAILED_TO_DELETE_DISCOUNT,
+                    RESPONSE_MESSAGE.DISCOUNT_NOT_FOUND
+                );
+            }
+
+            return sendResponse(
+                res,
+                STATUS_CODE.OK,
+                RESPONSE_MESSAGE.DISCOUNT_DELETED_SUCCESSFULLY,
+
+            );
+        } catch (err) {
+            console.error(err);
+            return sendResponse(
+                res,
+                STATUS_CODE.INTERNAL_SERVER_ERROR,
+                RESPONSE_MESSAGE.FAILED_TO_DELETE_DISCOUNT,
+                STATUS_RESPONSE.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
 }
 
 module.exports = new DiscountController();

@@ -6,7 +6,7 @@ const RESPONSE_MESSAGE = require("../constants/response_message");
 const mongoose = require("mongoose");
 
 const validateBookData = (req, res, next) => {
-    const { title, author, price, stock, totalSell, publishedDate, updateDate, edition, ISBN, pageNumber, country, language, genre, summary } = req.body;
+    const { title, author, price, stock, edition, totalSell, ISBN, pageNumber, country, language, genre, summary } = req.body;
     const errors = {};
 
     const decodedToken = decodeToken(req);
@@ -46,6 +46,10 @@ const validateBookData = (req, res, next) => {
         errors.stock = "Stock is required.";
     } else if (typeof stock !== "number" || stock < 1) {
         errors.stock = "Stock must be a number greater than or equal to 1";
+    }
+
+    if (totalSell && typeof totalSell !== "number" || totalSell < 1) {
+        errors.totalSell = "Total Sell must be a number greater than or equal to 1";
     }
 
     if (!pageNumber) {
@@ -99,7 +103,7 @@ const validateBookData = (req, res, next) => {
 }
 
 const validateUpdateBookData = (req, res, next) => {
-    const { bookId, title, author, price, stock, totalSell, publishedDate, updateDate, edition, ISBN, pageNumber, country, language, genre, summary } = req.body;
+    const { bookId, title, author, price, stock, edition, totalSell, ISBN, pageNumber, country, language, genre, summary } = req.body;
     const errors = {};
 
     const decodedToken = decodeToken(req);
@@ -146,6 +150,10 @@ const validateUpdateBookData = (req, res, next) => {
         errors.pageNumber = "Page number must be a number greater than or equal to 1";
     }
 
+    if (totalSell && typeof totalSell !== "number" || totalSell < 1) {
+        errors.totalSell = "Total Sell must be a number greater than or equal to 1";
+    }
+
     if (edition && typeof edition !== "number") {
         errors.edition = "Edition must be a number";
     }
@@ -182,7 +190,7 @@ const validateDeleteBookData = (req, res, next) => {
     const errors = {};
 
     const decodedToken = decodeToken(req);
-    if (decodedToken.role !== "admin") {
+    if (decodedToken.role !== "admin" && !decodedToken.admin.superAdmin) {
         return sendResponse(
             res,
             STATUS_CODE.UNAUTHORIZED,

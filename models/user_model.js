@@ -21,7 +21,6 @@ const userSchema = new mongoose.Schema(
     },
     phoneNumber: {
       type: String,
-      unique: true,
       validate: {
         validator: function (value) {
           const phoneNumberRegex = /^\d{11}$/;

@@ -53,7 +53,7 @@ class AuthController {
         };
       } else if (requestBody.role === 2) {
         const isPhoneNumberExists = await UserModel.findOne({ phoneNumber: requestBody.phoneNumber });
-        if (isPhoneNumberExists) {
+        if (isPhoneNumberExists && isPhoneNumberExists.phoneNumber) {
           return sendResponse(
             res,
             STATUS_CODE.CONFLICT,
