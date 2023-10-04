@@ -9,6 +9,6 @@ router.get("/:id", BookController.getBookById);
 router.post("/add", validateToken, validateBookData, BookController.addNewBook);
 router.put("/edit", validateToken, validateUpdateBookData, BookController.editBook);
 router.delete('/delete', validateToken, validateDeleteBookData, BookController.deleteBook);
-router.patch('/disable', validateToken, validateDisableBook, BookController.disableUser);
+router.patch('/disable', validateToken, validateDisableBook, BookController.disableBook);
 
 module.exports = router;

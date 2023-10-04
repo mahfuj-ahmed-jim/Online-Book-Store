@@ -1,6 +1,6 @@
 const AuthModel = require("../models/auth_model");
 const UserModel = require("../models/user_model");
-const { sendResponse } = require("../utils/common");
+const { sendResponse, writeToLogFile } = require("../utils/common");
 const { decodeToken } = require("../utils/token_handler");
 const STATUS_CODE = require("../constants/status_codes");
 const STATUS_RESPONSE = require("../constants/status_response");

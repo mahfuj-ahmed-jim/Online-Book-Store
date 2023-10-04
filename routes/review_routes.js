@@ -4,6 +4,7 @@ const { validateReviewData, validateUpdateReviewData } = require("../middleware/
 const express = require("express");
 const router = express.Router();
 
+router.get("/book/:id", ReviewController.getBookReview);
 router.post("/add", validateToken, validateReviewData, ReviewController.addReview);
 router.put("/update", validateToken, validateUpdateReviewData, ReviewController.editReview);
 router.delete("/delete/", validateToken, ReviewController.deleteReview);

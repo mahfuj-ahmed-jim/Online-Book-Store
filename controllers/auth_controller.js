@@ -1,8 +1,12 @@
 const AuthModel = require("../models/auth_model");
 const AdminModel = require("../models/admin_models");
 const UserModel = require("../models/user_model");
-const { sendResponse } = require("../utils/common");
-const { generateAdminToken, generateUserToken, decodeToken } = require("../utils/token_handler");
+const { sendResponse, writeToLogFile } = require("../utils/common");
+const {
+  generateAdminToken,
+  generateUserToken,
+  decodeToken,
+} = require("../utils/token_handler");
 const STATUS_CODE = require("../constants/status_codes");
 const STATUS_RESPONSE = require("../constants/status_response");
 const RESPONSE_MESSAGE = require("../constants/response_message");
@@ -14,8 +18,11 @@ class AuthController {
       const requestBody = req.body;
       let token, responseData;
 
-      const isEmailExists = await AuthModel.findOne({ email: requestBody.email });
+      const isEmailExists = await AuthModel.findOne({
+        email: requestBody.email,
+      });
       if (isEmailExists) {
+        writeToLogFile("Error: Failed to Signup Email Already Exists");
         return sendResponse(
           res,
           STATUS_CODE.CONFLICT,
@@ -35,6 +42,7 @@ class AuthController {
 
         const createdAdmin = await AdminModel.create(admin);
         if (!createdAdmin) {
+          writeToLogFile("Error: Failed to Signup - Internal Server Error");
           return sendResponse(
             res,
             STATUS_CODE.INTERNAL_SERVER_ERROR,
@@ -52,8 +60,11 @@ class AuthController {
           superAdmin: requestBody.superAdmin,
         };
       } else if (requestBody.role === 2) {
-        const isPhoneNumberExists = await UserModel.findOne({ phoneNumber: requestBody.phoneNumber });
+        const isPhoneNumberExists = await UserModel.findOne({
+          phoneNumber: requestBody.phoneNumber,
+        });
         if (isPhoneNumberExists && isPhoneNumberExists.phoneNumber) {
+          writeToLogFile("Error: Failed to Signup - Phone Number Already Exists");
           return sendResponse(
             res,
             STATUS_CODE.CONFLICT,
@@ -71,6 +82,8 @@ class AuthController {
 
         const createdUser = await UserModel.create(user);
         if (!createdUser) {
+          
+        writeToLogFile("Error: Failed to Signup - Internal Server Error");
           return sendResponse(
             res,
             STATUS_CODE.INTERNAL_SERVER_ERROR,
@@ -101,6 +114,7 @@ class AuthController {
 
       const createdAuth = await AuthModel.create(auth);
       if (!createdAuth) {
+        writeToLogFile("Error: Failed to Signup - Internal Server Error");
         return sendResponse(
           res,
           STATUS_CODE.INTERNAL_SERVER_ERROR,
@@ -108,7 +122,8 @@ class AuthController {
           STATUS_RESPONSE.INTERNAL_SERVER_ERROR
         );
       }
-
+      
+      writeToLogFile("Signup: Successfull");
       return sendResponse(
         res,
         STATUS_CODE.CREATED,
@@ -119,7 +134,7 @@ class AuthController {
         }
       );
     } catch (err) {
-      console.log(err);
+      writeToLogFile("Error: Failed to Signup - Internal Server Error");
       return sendResponse(
         res,
         STATUS_CODE.INTERNAL_SERVER_ERROR,
@@ -129,7 +144,7 @@ class AuthController {
     }
   }
 
-  async login(req, res) { 
+  async login(req, res) {
     try {
       const { email, password } = req.body;
       let responseData, token;
@@ -138,7 +153,8 @@ class AuthController {
         .populate("admin")
         .populate("user")
         .exec();
-      if (!auth) {
+      if (!auth) { 
+        writeToLogFile("Error: Failed to Login - Email Don't Exists");
         return sendResponse(
           res,
           STATUS_CODE.NOT_FOUND,
@@ -148,6 +164,7 @@ class AuthController {
       }
 
       if (auth.disable) {
+        writeToLogFile("Error: Failed to Login - Auth is Disable");
         return sendResponse(
           res,
           STATUS_CODE.FORBIDDEN,
@@ -160,6 +177,7 @@ class AuthController {
         const remainingTimeInSeconds = Math.ceil(
           (auth.blockUntil - new Date()) / 1000
         );
+        writeToLogFile("Error: Failed to Login - User is Blocked");
         return sendResponse(
           res,
           STATUS_CODE.UNAUTHORIZED,
@@ -177,6 +195,7 @@ class AuthController {
           auth.loginAttempts = 0;
 
           await auth.save();
+          writeToLogFile("Error: Failed to Login - User Get Blocked");
           return sendResponse(
             res,
             STATUS_CODE.UNAUTHORIZED,
@@ -186,6 +205,7 @@ class AuthController {
         }
 
         await auth.save();
+        writeToLogFile("Error: Failed to Login - Invalid Credential");
         return sendResponse(
           res,
           STATUS_CODE.UNAUTHORIZED,
@@ -205,6 +225,7 @@ class AuthController {
       auth.loginAttempts = 0;
       await auth.save();
 
+      writeToLogFile("Login: Successfully Login");
       return sendResponse(
         res,
         STATUS_CODE.OK,
@@ -217,12 +238,12 @@ class AuthController {
             name: responseData.name,
             phoneNumber: responseData.phoneNumber,
             address: responseData.address,
-            superAdmin: responseData.superAdmin
+            superAdmin: responseData.superAdmin,
           },
         }
       );
     } catch (err) {
-      console.log(err);
+      writeToLogFile("Error: Failed to Login - Internal Server Error");
       return sendResponse(
         res,
         STATUS_CODE.INTERNAL_SERVER_ERROR,

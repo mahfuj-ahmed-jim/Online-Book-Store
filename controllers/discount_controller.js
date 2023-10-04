@@ -1,5 +1,5 @@
 const DiscountModel = require("../models/discount_model");
-const { sendResponse } = require("../utils/common");
+const { sendResponse, writeToLogFile } = require("../utils/common");
 const { decodeToken } = require("../utils/token_handler");
 const STATUS_CODE = require("../constants/status_codes");
 const STATUS_RESPONSE = require("../constants/status_response");
@@ -10,6 +10,7 @@ class DiscountController {
         try {
             const decodedToken = decodeToken(req);
             if (decodedToken.role !== "admin" && !decodedToken.admin.superAdmin) {
+                writeToLogFile("Error: Failed to Get All Discounts - Unauthorized");
                 return sendResponse(
                     res,
                     STATUS_CODE.UNAUTHORIZED,
@@ -23,6 +24,7 @@ class DiscountController {
                 .populate({ path: "authors", model: "authors", select: "_id name country " })
                 .exec();
 
+            writeToLogFile("Get All Discounts - Successfull");
             return sendResponse(
                 res,
                 STATUS_CODE.OK,
@@ -32,6 +34,7 @@ class DiscountController {
 
         } catch (err) {
             console.error(err);
+            writeToLogFile("Error: Failed to Get All Discounts - Internal Server Error");
             return sendResponse(
                 res,
                 STATUS_CODE.INTERNAL_SERVER_ERROR,
@@ -53,6 +56,7 @@ class DiscountController {
                 });
 
                 if (existingDiscount) {
+                    writeToLogFile("Error: Failed to Add Discount - Already Exists");
                     return sendResponse(
                         res,
                         STATUS_CODE.BAD_REQUEST,
@@ -68,6 +72,7 @@ class DiscountController {
                 });
 
                 if (existingDiscount) {
+                    writeToLogFile("Error: Failed to Add Discount - Already Exists");
                     return sendResponse(
                         res,
                         STATUS_CODE.BAD_REQUEST,
@@ -79,6 +84,7 @@ class DiscountController {
 
             const newDiscount = await DiscountModel.create(requestBody);
             if (!newDiscount) {
+                writeToLogFile("Error: Failed to Add Discount - Internal Server Error");
                 return sendResponse(
                     res,
                     STATUS_CODE.INTERNAL_SERVER_ERROR,
@@ -87,6 +93,7 @@ class DiscountController {
                 );
             }
 
+            writeToLogFile("Add Discount: Successfull");
             return sendResponse(
                 res,
                 STATUS_CODE.CREATED,
@@ -94,7 +101,7 @@ class DiscountController {
                 newDiscount
             );
         } catch (err) {
-            console.error(err);
+            writeToLogFile("Error: Failed to Add Discount - Internal Server Error");
             return sendResponse(
                 res,
                 STATUS_CODE.INTERNAL_SERVER_ERROR,
@@ -111,6 +118,7 @@ class DiscountController {
 
             let discount = await DiscountModel.find({ _id: discountId });
             if (!discount) {
+                writeToLogFile("Error: Failed to Update Discount - Dont Exists");
                 return sendResponse(
                     res,
                     STATUS_CODE.BAD_REQUEST,
@@ -128,6 +136,7 @@ class DiscountController {
                 });
 
                 if (existingDiscount) {
+                    writeToLogFile("Error: Failed to Update Discount - Already Exists");
                     return sendResponse(
                         res,
                         STATUS_CODE.BAD_REQUEST,
@@ -144,6 +153,7 @@ class DiscountController {
                 });
 
                 if (existingDiscount) {
+                    writeToLogFile("Error: Failed to Update Discount - Already Exists");
                     return sendResponse(
                         res,
                         STATUS_CODE.BAD_REQUEST,
@@ -163,6 +173,7 @@ class DiscountController {
                 { new: true }
             );
 
+            writeToLogFile("Update Discount: Successfull");
             return sendResponse(
                 res,
                 STATUS_CODE.OK,
@@ -170,7 +181,7 @@ class DiscountController {
                 updatedDiscount
             );
         } catch (err) {
-            console.error(err);
+            writeToLogFile("Error: Failed to Update Discount - Internal Server Error");
             return sendResponse(
                 res,
                 STATUS_CODE.INTERNAL_SERVER_ERROR,
@@ -186,6 +197,7 @@ class DiscountController {
 
             const decodedToken = decodeToken(req);
             if (decodedToken.role !== "admin" && !decodedToken.admin.superAdmin) {
+                writeToLogFile("Error: Failed to Deletet Discount - Unauthorized");
                 return sendResponse(
                     res,
                     STATUS_CODE.UNAUTHORIZED,
@@ -197,6 +209,7 @@ class DiscountController {
             const deletedDiscount = await DiscountModel.findOneAndDelete({ _id: discountId });
 
             if (!deletedDiscount) {
+                writeToLogFile("Error: Failed to Deletet Discount - Not Found");
                 return sendResponse(
                     res,
                     STATUS_CODE.NOT_FOUND,
@@ -205,6 +218,7 @@ class DiscountController {
                 );
             }
 
+            writeToLogFile("Deletet Discount: Successfull");
             return sendResponse(
                 res,
                 STATUS_CODE.OK,
@@ -212,7 +226,7 @@ class DiscountController {
 
             );
         } catch (err) {
-            console.error(err);
+            writeToLogFile("Error: Failed to Deletet Discount - Internal Server Error");
             return sendResponse(
                 res,
                 STATUS_CODE.INTERNAL_SERVER_ERROR,

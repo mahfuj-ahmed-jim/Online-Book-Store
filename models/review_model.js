@@ -8,10 +8,10 @@ const reviewSchema = new mongoose.Schema({
   },
   book: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "book",
+    ref: "books",
     required: true,
   },
-  comment: {
+  review: {
     type: String,
   },
   rating: {

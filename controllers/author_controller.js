@@ -1,6 +1,6 @@
 const AdminModel = require("../models/admin_models");
 const AuthorModel = require("../models/author_model");
-const { sendResponse } = require("../utils/common");
+const { sendResponse, writeToLogFile } = require("../utils/common");
 const STATUS_CODE = require("../constants/status_codes");
 const STATUS_RESPONSE = require("../constants/status_response");
 const RESPONSE_MESSAGE = require("../constants/response_message");
@@ -19,6 +19,7 @@ class AuthorController {
         .limit(limit)
         .exec();;
 
+      writeToLogFile("Get All Authors: Successfully Get All Authors");
       return sendResponse(
         res,
         STATUS_CODE.OK,
@@ -31,6 +32,7 @@ class AuthorController {
         }
       );
     } catch (err) {
+      writeToLogFile("Error: Failed to Get All Auhtors - Internal Server Error");
       return sendResponse(
         res,
         STATUS_CODE.INTERNAL_SERVER_ERROR,
@@ -46,6 +48,7 @@ class AuthorController {
 
       const isIdValid = mongoose.Types.ObjectId.isValid(authorId);
       if (!isIdValid) {
+        writeToLogFile("Error: Failed to Get Author by ID - Invalid Id");
         return sendResponse(
           res,
           STATUS_CODE.NOT_FOUND,
@@ -60,6 +63,7 @@ class AuthorController {
       ).exec();
 
       if (!author) {
+        writeToLogFile("Error: Failed to Get Author by ID - Author Don't Exists");
         return sendResponse(
           res,
           STATUS_CODE.NOT_FOUND,
@@ -68,6 +72,7 @@ class AuthorController {
         );
       }
 
+      writeToLogFile("Get Author by ID: Successfully Get Author by ID");
       return sendResponse(
         res,
         STATUS_CODE.OK,
@@ -76,6 +81,7 @@ class AuthorController {
       );
     } catch (err) {
       console.log(err);
+      writeToLogFile("Error: Failed to Get Author by ID - Internal Server Error");
       return sendResponse(
         res,
         STATUS_CODE.INTERNAL_SERVER_ERROR,
@@ -91,6 +97,7 @@ class AuthorController {
 
       const author = await AuthorModel.findOne({ name: requestBody.name });
       if (author) {
+        writeToLogFile("Error: Failed to Add New Author - Name Already Exists");
         return sendResponse(
           res,
           STATUS_CODE.CONFLICT,
@@ -101,6 +108,7 @@ class AuthorController {
 
       const createdAuthor = await AuthorModel.create(requestBody);
       if (!createdAuthor) {
+        writeToLogFile("Error: Failed to Add New Author - Internal Server Error");
         return sendResponse(
           res,
           STATUS_CODE.INTERNAL_SERVER_ERROR,
@@ -109,6 +117,7 @@ class AuthorController {
         );
       }
 
+      writeToLogFile("Add New Author: - Successfully Add New Author");
       return sendResponse(
         res,
         STATUS_CODE.CREATED,
@@ -121,6 +130,7 @@ class AuthorController {
         }
       );
     } catch (err) {
+      writeToLogFile("Error: Failed to Add New Author - Internal Server Error");
       return sendResponse(
         res,
         STATUS_CODE.INTERNAL_SERVER_ERROR,
@@ -136,6 +146,7 @@ class AuthorController {
 
       const author = await AuthorModel.findOne({ _id: requestBody.authorId, disable: !requestBody.disable }, { createdAt: false, updatedAt: false, __v: false });
       if (!author) {
+        writeToLogFile("Error: Failed to Disable Author - Author Don't Exists");
         return sendResponse(
           res,
           STATUS_CODE.NOT_FOUND,
@@ -147,6 +158,7 @@ class AuthorController {
       author.disable = requestBody.disable;
       await author.save();
 
+      writeToLogFile("Disable Author - Successfully Disable Author");
       return sendResponse(
         res,
         STATUS_CODE.OK,
@@ -155,7 +167,7 @@ class AuthorController {
       );
 
     } catch (err) {
-      console.log(err);
+      writeToLogFile("Error: Failed to Disable Author - Internal Server Error");
       return sendResponse(
         res,
         STATUS_CODE.INTERNAL_SERVER_ERROR,
