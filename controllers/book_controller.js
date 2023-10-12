@@ -84,6 +84,7 @@ class BookController {
             genre: 1,
             country: 1,
             image: 1,
+            rating: 1,
             "author._id": 1,
             "author.name": 1,
             "author.country": 1,
@@ -98,7 +99,7 @@ class BookController {
       ];
 
       if (Object.keys(sortStage).length > 0) {
-        aggregationPipeline.push({
+        aggregatePipeline.push({
           $sort: sortStage,
         });
       }
@@ -115,11 +116,14 @@ class BookController {
       const discounts = await DiscountModel.find(query);
       const booksWithDiscounts = countBookDiscount(books, discounts);
 
+      const totalBooks = await BookModel.find({disable: false}).count();
+
       writeToLogFile("Get All Books: Successfully Get All Books");
       return sendResponse(res, STATUS_CODE.OK, RESPONSE_MESSAGE.GET_ALL_BOOKS, {
         page: page,
         bookPerPage: limit,
         totalBooks: booksWithDiscounts.length,
+        totalPages: Math.ceil(totalBooks / limit),
         books: booksWithDiscounts,
       });
     } catch (err) {

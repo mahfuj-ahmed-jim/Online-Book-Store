@@ -232,6 +232,7 @@ class AuthController {
         RESPONSE_MESSAGE.LOGIN_SUCCESSFUL,
         {
           token: token,
+          role: auth.role,
           user: {
             _id: responseData._id,
             email: responseData.email,
